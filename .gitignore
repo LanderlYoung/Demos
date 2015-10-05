@@ -1,3 +1,6 @@
+#hiden files
+.*
+
 # Built application files
 *.apk
 *.ap_
@@ -25,3 +28,7 @@ proguard/
 
 # Log Files
 *.log
+
+#haskell
+*.o
+*.hi
