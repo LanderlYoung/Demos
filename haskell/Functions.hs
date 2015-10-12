@@ -21,7 +21,7 @@ fac x = if x < 0 then error "n < 0"
 
 snoc :: a -> [a] -> [a]
 snoc i [] = [i]
-snoc i (x:xs) = x : snoc i xs 
+snoc i (x:xs) = x : snoc i xs
 
 last' :: [a] -> a
 last' [] = error "empty list"
@@ -100,15 +100,57 @@ fiboPair n = fiboStep $ fiboPair (n - 1)
 
 fastFibo :: (Num a, Eq a) => a -> a
 fastFibo n = snd $ fiboPair n
-{- end fastFibo -}
 
 golden :: Fractional a => Int -> [a]
 golden n = take n (map (\(x, y) -> x/y) (iterate fiboStep (0, 1)))
+{- end fastFibo -}
+
+--todo bug here
+_binSearch :: Ord a =>  Int -> Int -> a -> [a] -> Int
+_binSearch left right key xs
+    | left > right = -1
+    | otherwise = let mid = (left + right) `div` 2 in
+        let m =  xs!!mid in
+        if m == key then mid
+            else if m < key
+                then _binSearch (mid + 1) right key xs
+                else _binSearch left (mid - 1) key xs
+
+mySearch :: Ord a => a -> [a] -> Int
+mySearch key xs = _binSearch 0 (length xs) key xs
 
 --binary search
 binSearch :: Ord a => a -> [a] -> Bool
 binSearch a [] = False
-binSearch a xs | m < a = search a behid
-               | m > a = search a front
+binSearch a xs | m < a = binSearch a behid
+               | m > a = binSearch a front
                | otherwise = True
                  where (front, m:behid) = splitAt (length xs `div` 2) xs
+
+
+insert :: Ord a => a -> [a] -> [a]
+insert a [] = [a]
+insert a (x:xs) | a < x = a:x:xs
+                | otherwise = x : insert a xs
+
+{--the grecious implementation--}
+insertSort :: Ord a => [a] -> [a]
+insertSort [] = []
+insertSort (x:xs) = insert x (insertSort xs)
+
+
+{-- dump one-}
+_myInsertSort :: Ord a => {--store--} [a] {--input--} -> [a] -> [a]
+_myInsertSort store [] = store
+_myInsertSort store (x:xs) = _myInsertSort (insert x store) xs
+
+myInsertSort :: Ord a => [a] -> [a]
+myInsertSort = _myInsertSort []
+{-- end dump one-}
+
+
+
+
+
+
+
