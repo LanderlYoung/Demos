@@ -45,7 +45,7 @@ public class JavaDemo {
         boolean changed = true;
         while (changed) {
             changed = false;
-            for (int i = 0; i < arr.length; i++) {
+            for (int i = 1; i < arr.length; i++) {
                 if (arr[i-1] > arr[i]) {
                     swap(arr, i-1, i);
                     changed = true;
