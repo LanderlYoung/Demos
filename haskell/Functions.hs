@@ -170,14 +170,22 @@ bubbleSort :: Ord a => [a] -> [a]
 bubbleSort xs = fix swaps xs
 
 --my
-bubbleSort' :: Ord a => [a] -> [a]
-bubbleSort' xs = if xs == xs' then xs else bubbleSort' xs'
-                     where xs' = swaps xs
+myBubbleSort :: Ord a => [a] -> [a]
+myBubbleSort xs = if xs == xs' then xs else myBubbleSort xs'
+                    where xs' = swaps xs
 
 --in the book
-bubbleSort'' :: Ord a => [a] -> [a]
+{-- fuck i don't know why, but the compiler complains about indent
+bubbleSort' :: Ord a => [a] -> [a]
 bubbleSort' xs | swaps xs == xs = xs
                | otherwise bubbleSort' $ swaps xs
+--}
 
 
+bubbleSort'' :: Ord a => [a] -> [a]
+bubbleSort'' [] = []
+bubbleSort'' xs = bubbleSort'' initialElements ++ [lastElement]
+                    where swappedxs = swaps xs
+                          initialElements = init swappedxs
+                          lastElement = last swappedxs
 
