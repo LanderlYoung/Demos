@@ -15,6 +15,8 @@
 
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
+constexpr GLdouble Pi = 3.1415926536;
+
 void lineSegment();
 
 void drawCircle();
@@ -24,3 +26,9 @@ void drawSinWave();
 void polygonFace();
 
 void polygonStipple();
+
+void color();
+
+void colorPlate();
+
+void colorShadeModel();
