@@ -6,7 +6,7 @@ find_package(GLEW REQUIRED)
 
 add_executable(glfw_app
         glfw_main.cpp
-        TriangleRenderer.cpp)
+        TriangleRenderer.cpp MyTriangleRender.cpp utils.h)
 target_include_directories(glfw_app PUBLIC
         ${GLEW_INCLUDE_DIRS}
         ${OPENGL_INCLUDE_DIR})

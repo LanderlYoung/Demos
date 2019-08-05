@@ -13,6 +13,8 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 
+#include "utils.h"
+
 class Renderer {
 public:
     Renderer() = default;
@@ -23,3 +25,7 @@ public:
 };
 
 Renderer *makeTriangleRenderer();
+
+Renderer *makeMyTriangleRenderer();
+
+constexpr auto makeRenderer = makeMyTriangleRenderer;
