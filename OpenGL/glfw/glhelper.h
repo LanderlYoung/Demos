@@ -97,10 +97,6 @@ public:
     public:
         DISALLOW_COPY_ASSIGN(Scope);
 
-        Scope(Scope &&from) : programId(from.programId) {
-            from.programId = 0;
-        }
-
         explicit Scope(const ShaderProgram &program) noexcept
                 : programId(program.program) {
             if (program.program) {
@@ -109,12 +105,20 @@ public:
             }
         }
 
+        Scope(Scope &&from) noexcept : programId(from.programId) {
+            from.programId = 0;
+        }
+
         ~Scope() {
             if (programId) {
+                // assert legit stack status
                 assert(!_programScopeStack.empty());
                 assert(_programScopeStack.at(_programScopeStack.size() - 1) == programId);
+
+                // pop current scope
                 _programScopeStack.pop_back();
 
+                // restore previous scope
                 if (_programScopeStack.empty()) {
                     glUseProgram(0);
                 } else {

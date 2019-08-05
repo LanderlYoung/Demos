@@ -39,7 +39,11 @@ private:
     gl::ShaderProgram shaderProgram;
     GLuint VBO = 0;
     GLuint VAO = 0;
-
+    GLfloat vertices[9] = {
+            -0.5f, -0.5f, 0.0f, // Left
+            0.5f, -0.5f, 0.0f,  // Right
+            0.0f, 0.5f, 0.0f    // Top
+    };
 public:
     MyTriangleRenderer() : shaderProgram(vertexShader, fragmentShader) {
         if (!shaderProgram.success()) {
@@ -55,11 +59,6 @@ public:
             glGenBuffers(1, &VBO);
             glBindBuffer(GL_ARRAY_BUFFER, VBO);
             // Set up vertex data (and buffer(s)) and attribute pointers
-            GLfloat vertices[] = {
-                    -0.5f, -0.5f, 0.0f, // Left
-                    0.5f, -0.5f, 0.0f, // Right
-                    0.0f, 0.5f, 0.0f  // Top
-            };
             glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
             //https://learnopengl-cn.readthedocs.io/zh/latest/01%20Getting%20started/04%20Hello%20Triangle/
@@ -92,9 +91,33 @@ public:
         glDeleteBuffers(1, &VBO);
     }
 
+    void step() {
+        if (vertices[0] > 1.0f) {
+            vertices[0] = -1.0f;
+            vertices[1] = -1.0f;
+
+            vertices[3] = 0.0f;
+            vertices[4] = -1.0f;
+
+            vertices[6] = -0.5f;
+            vertices[7] = -0.0f;
+        } else {
+            for (auto i = 0; i < 3; i++) {
+                auto stepLen = 0.0005f;
+                vertices[i * 3] += stepLen;
+                vertices[i * 3 + 1] += stepLen;
+            }
+        }
+    }
+
     void render() override {
         auto scope = shaderProgram.use();
         glBindVertexArray(VAO);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        step();
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
         glDrawArrays(GL_TRIANGLES, 0, 3);
         // release bound array
         glBindVertexArray(0);
