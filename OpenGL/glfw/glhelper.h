@@ -133,11 +133,13 @@ public:
     };
 
 private:
-    GLuint program = 0;
+    GLuint program;
     std::string compileLog;
 public:
     ShaderProgram(const std::string_view &vertexShader,
-                  const std::string_view &fragmentShader) : compileLog() {
+                  const std::string_view &fragmentShader)
+            : program(0), compileLog() {
+
         Shader<true> vertex(vertexShader);
         if (vertex.success()) {
             Shader<false> fragment(fragmentShader);
@@ -192,8 +194,12 @@ public:
         return program;
     }
 
-    Scope use() {
-        return std::move(Scope(*this));
+    Scope use() const {
+        return Scope(*this);
+    }
+
+    GLuint getUniformLocation(const std::string_view &uniformName) const {
+        return glGetUniformLocation(program, uniformName.data());
     }
 
     const std::string &getCompileLog() const {

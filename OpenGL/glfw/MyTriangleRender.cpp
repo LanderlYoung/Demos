@@ -34,7 +34,7 @@ void main() {
 
 )";
 
-class MyTriangleRenderer : public Renderer {
+class LessionShaderRenderer : public Renderer {
 private:
     gl::ShaderProgram shaderProgram;
     GLuint VBO = 0;
@@ -45,7 +45,7 @@ private:
             0.0f, 0.5f, 0.0f    // Top
     };
 public:
-    MyTriangleRenderer() : shaderProgram(vertexShader, fragmentShader) {
+    LessionShaderRenderer() : shaderProgram(vertexShader, fragmentShader) {
         if (!shaderProgram.success()) {
             std::cerr << "compile shader failed " << shaderProgram.getCompileLog() << std::endl;
             return;
@@ -86,7 +86,7 @@ public:
         }
     }
 
-    ~MyTriangleRenderer() override {
+    ~LessionShaderRenderer() override {
         glDeleteVertexArrays(1, &VAO);
         glDeleteBuffers(1, &VBO);
     }
@@ -126,5 +126,5 @@ public:
 };
 
 Renderer *makeMyTriangleRenderer() {
-    return new MyTriangleRenderer();
+    return new LessionShaderRenderer();
 }
