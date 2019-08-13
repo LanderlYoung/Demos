@@ -5,8 +5,18 @@ find_package(glfw3 3.3 REQUIRED)
 find_package(GLEW REQUIRED)
 
 add_executable(glfw_app
+        utils.h
+        glhelper.h
+        glhelper.cpp
         glfw_main.cpp
-        TriangleRenderer.cpp MyTriangleRender.cpp utils.h glhelper.cpp glhelper.h LesonShader.cpp)
+        TriangleRenderer.cpp
+        MyTriangleRender.cpp
+        Leson2Shader.cpp
+        lesson3Texture.cpp
+
+        ../ext/lodepng/lodepng.h
+        ../ext/lodepng/lodepng.cpp
+        )
 target_include_directories(glfw_app PUBLIC
         ${GLEW_INCLUDE_DIRS}
         ${OPENGL_INCLUDE_DIR})
