@@ -41,7 +41,7 @@ void main() {
 
 class LessonShaderRenderer : public Renderer {
 private:
-    gl::ShaderProgram shaderProgram;
+    gl::ShaderProgramWithUniform<GLuint> shaderProgram;
     GLuint VBO_Position = 0;
     GLuint VAO = 0;
 //    GLfloat vertices[18]{
@@ -58,7 +58,11 @@ private:
             0.5f, 0.5f, 0.0f,   /**/ 0.0f, 0.0f, 1.0f    // 顶部
     };
 public:
-    LessonShaderRenderer() : shaderProgram(vertexShader, fragmentShader) {
+    LessonShaderRenderer() :
+            shaderProgram(
+                    vertexShader,
+                    fragmentShader,
+                    [](auto &p, auto &u) { u = p.getUniformLocation("xTrans"); }) {
         if (!shaderProgram.success()) {
             std::cerr << "compile shader failed " << shaderProgram.getCompileLog() << std::endl;
             return;
@@ -143,11 +147,9 @@ public:
     }
 
     void render() override {
-        auto oc = shaderProgram.getUniformLocation("xTrans");
-
         auto scope = shaderProgram.use();
 
-        glUniform1f(oc, 0.4f);
+        glUniform1f(shaderProgram.uniform, 0.4f);
         glBindVertexArray(VAO);
 
         glDrawArrays(GL_TRIANGLES, 0, 3);
