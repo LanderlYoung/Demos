@@ -162,35 +162,35 @@ public:
 
 };
 
-template<typename ShaderUniformLocationStore>
-class ShaderProgramWithUniform : public ShaderProgram {
+template<typename ShaderLocationStore>
+class ShaderProgramExtra : public ShaderProgram {
 public:
-    ShaderUniformLocationStore uniform;
+    ShaderLocationStore location;
 
-    ShaderProgramWithUniform(
+    ShaderProgramExtra(
             const std::string_view &vertexShader,
             const std::string_view &fragmentShader) :
             ShaderProgram(vertexShader, fragmentShader),
-            uniform() {}
+            location() {}
 
-    ShaderProgramWithUniform(
+    ShaderProgramExtra(
             const std::string_view &vertexShader,
             const std::string_view &fragmentShader,
-            const std::function<void(const ShaderProgram &, ShaderUniformLocationStore &)> &uniformInit) :
+            const std::function<void(const ShaderProgram &, ShaderLocationStore &)> &uniformInit) :
             ShaderProgram(vertexShader, fragmentShader),
-            uniform() {
+            location() {
         if (success()) {
-            uniformInit(static_cast<ShaderProgram&>(*this), uniform);
+            uniformInit(static_cast<ShaderProgram&>(*this), location);
         }
     }
 
-    DISALLOW_COPY_ASSIGN(ShaderProgramWithUniform);
+    DISALLOW_COPY_ASSIGN(ShaderProgramExtra);
 
-    ~ShaderProgramWithUniform() = default;
+    ~ShaderProgramExtra() = default;
 
-    ShaderProgramWithUniform(ShaderProgramWithUniform &&move) :
+    ShaderProgramExtra(ShaderProgramExtra &&move) :
             ShaderProgram(move) {
-        uniform = move.uniform;
+        location = std::move(move.location);
     }
 };
 
