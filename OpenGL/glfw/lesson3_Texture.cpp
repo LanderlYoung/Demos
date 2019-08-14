@@ -238,13 +238,14 @@ public:
     void render() override {
         if (!shaderMachine.success()) return;
 
-        glBindTexture(GL_TEXTURE_2D, texture1);
         gl::Scope p(shaderMachine);
 
         glCheckError();
         // texture unit
         glActiveTexture(GL_TEXTURE0);
+        // bind texture1 to texture-unit 0
         glBindTexture(GL_TEXTURE_2D, texture1);
+        // bind texture2 to texture-unit 1
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
 
