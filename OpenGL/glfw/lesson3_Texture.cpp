@@ -138,6 +138,8 @@ public:
                     (void *) (6 * sizeof(GLfloat))
             );
             glEnableVertexAttribArray(0);
+            glEnableVertexAttribArray(1);
+            glEnableVertexAttribArray(2);
             glBindBuffer(GL_ARRAY_BUFFER, 0);
 
             {
