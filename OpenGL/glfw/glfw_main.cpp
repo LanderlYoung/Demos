@@ -55,7 +55,7 @@ int main()
     glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height);
 
-    auto render = makeRenderer();
+    auto renderer = makeRenderer();
     // Game loop
     while (!glfwWindowShouldClose(window)) {
         // Check if any events have been activated (key pressed, mouse moved etc.)
@@ -67,13 +67,13 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        render->render();
+        renderer->render();
 
         // Swap the screen buffers
         glfwSwapBuffers(window);
     }
 
-    delete render;
+    delete renderer;
     // Terminate GLFW, clearing any resources allocated by GLFW.
     glfwTerminate();
     return 0;

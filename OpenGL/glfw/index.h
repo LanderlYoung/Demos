@@ -32,4 +32,4 @@ Renderer *makeShaderRenderer();
 
 Renderer *makeTextureRenderer();
 
-constexpr auto makeRenderer = makeRectangleRenderer;
+constexpr auto makeRenderer = makeTextureRenderer;
