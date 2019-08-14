@@ -38,7 +38,10 @@ Renderer *makeShaderRenderer();
 
 Renderer *makeTextureRenderer();
 
+Renderer *makeTransformationsRenderer();
+
 //constexpr auto makeRenderer = makeTriangleRenderer;
 //constexpr auto makeRenderer = makeRectangleRenderer;
 //constexpr auto makeRenderer = makeShaderRenderer;
-constexpr auto makeRenderer = makeTextureRenderer;
+//constexpr auto makeRenderer = makeTextureRenderer;
+constexpr auto makeRenderer = makeTransformationsRenderer;
