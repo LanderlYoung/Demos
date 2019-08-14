@@ -131,12 +131,6 @@ public:
         from.compileLog = "(deleted)";
     }
 
-    ShaderProgram &&fromFile(
-            const std::string &vertexShaderPath,
-            const std::string &fragmentShaderPath) {
-        return std::move(ShaderProgram(readFile(vertexShaderPath), readFile(fragmentShaderPath)));
-    }
-
     bool success() const { return program != 0; }
 
     GLuint get() const { return program; }
