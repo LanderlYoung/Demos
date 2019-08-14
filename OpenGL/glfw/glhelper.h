@@ -27,44 +27,11 @@ private:
     GLuint program = 0;
     std::string compileLog;
 public:
-    explicit Shader(const std::string_view &shaderSource) : compileLog() {
-        GLuint shaderId = 0;
-        if (VertexOrFragment) {
-            shaderId = glCreateShader(GL_VERTEX_SHADER);
-        } else {
-            shaderId = glCreateShader(GL_FRAGMENT_SHADER);
-        }
-        const GLchar *vs = shaderSource.data();
-        const GLint vsl = shaderSource.length();
-        glShaderSource(shaderId, 1, &vs, &vsl);
-        glCompileShader(shaderId);
-
-        GLint status;
-        // params returns GL_TRUE if the last compile operation on
-        // shader was successful, and GL_FALSE otherwise.
-        glGetShaderiv(shaderId, GL_COMPILE_STATUS, &status);
-        if (status == GL_TRUE) {
-            program = shaderId;
-        } else {
-            // params returns the number of characters in the information log
-            // for shader including the null termination character
-            // (i.e., the size of the character buffer required to
-            // store the information log).
-            // If shader has no information log, a value of 0 is returned.
-            glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &status);
-            compileLog.resize(status);
-            glGetShaderInfoLog(shaderId, status, nullptr, compileLog.data());
-            glDeleteShader(shaderId);
-        }
-    }
+    explicit Shader(const std::string_view &shaderSource);
 
     DISALLOW_COPY_ASSIGN(Shader);
 
-    ~Shader() {
-        if (program) {
-            glDeleteShader(program);
-        }
-    }
+    ~Shader() { if (program) glDeleteShader(program); }
 
     Shader(Shader &&from) noexcept : program(from.program), compileLog(from.compileLog) {
         from.program = 0;
@@ -75,56 +42,58 @@ public:
         return std::move(Shader<VertexOrFragment>(readFile(filePath)));
     }
 
-    bool success() const {
-        return program != 0;
-    }
+    bool success() const { return program != 0; }
 
-    GLuint get() const {
-        return program;
-    }
+    GLuint get() const { return program; }
 
-    GLuint operator*() const {
-        return program;
-    }
+    GLuint operator*() const { return program; }
 
-    [[nodiscard]] const std::string &getCompileLog() const {
-        return compileLog;
-    }
+    const std::string &getCompileLog() const { return compileLog; }
 };
 
-class ShaderProgram {
+class Scope {
+public:
+    class Usable {
+    public:
+        virtual void use() = 0;
+
+        virtual void unuse() = 0;
+    };
+
+private:
+    static thread_local std::vector<Scope::Usable *> _usableStack;
+    Usable *usable;
 
 public:
-    class Scope {
-    private:
-        static thread_local std::vector<GLuint> _programScopeStack;
-        GLuint programId;
 
-    public:
-        DISALLOW_COPY_ASSIGN(Scope);
+    DISALLOW_COPY_ASSIGN(Scope);
 
-        explicit Scope(const ShaderProgram &program) noexcept : Scope(program.program) {}
+    DISALLOW_DYNAMIC_CONSTRUCT(Scope);
 
-        explicit Scope(GLuint programId) noexcept;
+    explicit Scope(Usable *usable) noexcept;
 
-        Scope(Scope &&from) noexcept : programId(from.programId) { from.programId = 0; }
+    explicit Scope(Usable &usable) noexcept: Scope(&usable) {}
 
-        ~Scope();
+    Scope(Scope &&from) noexcept : usable(from.usable) { from.usable = nullptr; }
 
-    };
+    ~Scope();
+};
+
+class ShaderProgram : public Scope::Usable {
+
+public:
 
 private:
     GLuint program;
     std::string compileLog;
 
-    static GLuint compileProgram(const std::string_view &vertexShader,
-                                 const std::string_view &fragmentShader,
-                                 std::string &compileLog);
+    void compileProgram(const std::string_view &vertexShader,
+                        const std::string_view &fragmentShader);
 public:
     ShaderProgram(const std::string_view &vertexShader,
                   const std::string_view &fragmentShader)
             : program(0), compileLog() {
-        program = compileProgram(vertexShader, fragmentShader, compileLog);
+        compileProgram(vertexShader, fragmentShader);
     }
 
     DISALLOW_COPY_ASSIGN(ShaderProgram);
@@ -154,18 +123,20 @@ public:
 
     const std::string &getCompileLog() const { return compileLog; }
 
-    Scope use() const { return Scope(*this); }
-
     GLuint getUniformLocation(const std::string_view &uniformName) const {
         return glGetUniformLocation(program, uniformName.data());
     }
 
+    void use() override { glUseProgram(program); }
+
+    void unuse() override { glUseProgram(0); }
+
 };
 
-template<typename ShaderLocationStore>
+template<typename Extra>
 class ShaderProgramExtra : public ShaderProgram {
 public:
-    ShaderLocationStore location;
+    Extra location;
 
     ShaderProgramExtra(
             const std::string_view &vertexShader,
@@ -176,7 +147,7 @@ public:
     ShaderProgramExtra(
             const std::string_view &vertexShader,
             const std::string_view &fragmentShader,
-            const std::function<void(const ShaderProgram &, ShaderLocationStore &)> &uniformInit) :
+            const std::function<void(const ShaderProgram &, Extra &)> &uniformInit) :
             ShaderProgram(vertexShader, fragmentShader),
             location() {
         if (success()) {

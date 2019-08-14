@@ -21,4 +21,8 @@
             DISALLOW_ASSIGN(CLASS_NAME); \
             DISALLOW_MOVE(CLASS_NAME)
 
+#define DISALLOW_DYNAMIC_CONSTRUCT(CLASS_NAME) \
+        void* operator new(std::size_t) = delete; \
+        void* operator new[](std::size_t) = delete
+
 
