@@ -47,10 +47,7 @@ void main() {
 
 class TextureRenderer : public Renderer {
 private:
-    gl::ShaderProgram shaderProgram;
-    GLuint VAO = 0;
-    GLuint VBO = 0;
-    GLuint EBO = 0;
+    gl::ShaderMachine<> shaderMachine;
     GLuint texture = 0;
     GLfloat vertices[32]{
             //     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
@@ -72,86 +69,50 @@ private:
     }
 
 public:
-    TextureRenderer() : shaderProgram(vertexShader, fragmentShader) {
-        if (!shaderProgram.success()) {
-            std::cerr << "compile shader failed " << shaderProgram.getCompileLog() << std::endl;
+    TextureRenderer() : shaderMachine(vertexShader, fragmentShader) {
+        if (!shaderMachine.success()) {
+            std::cerr << "compile shader failed " << shaderMachine.getCompileLog() << std::endl;
             return;
         }
 
         prepareVertexData();
+        glCheckError();
 
         prepareTexture();
+        glCheckError();
     }
 
     void prepareVertexData() {
-        glGenVertexArrays(1, &VAO);
+        auto vaoScope = shaderMachine.useVertexArrayObject();
+        auto vboScope = shaderMachine.useVertexBufferObject();
+        // Set up vertex data (and buffer(s)) and attribute pointers
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-        glBindVertexArray(VAO);
-        // operations on the VAO
+        //https://learnopengl-cn.readthedocs.io/zh/latest/01%20Getting%20started/04%20Hello%20Triangle/
+        glVertexAttribPointer(
+                // location in shader
+                0,
+                // size
+                3,
+                // type
+                GL_FLOAT,
+                // normalize to [-1, 1]
+                GL_FALSE,
+                // stride (length of each element)
+                8 * sizeof(GLfloat),
+                // offset?
+                nullptr
+        );
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void *) (3 * sizeof(GLfloat)));
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void *) (6 * sizeof(GLfloat)));
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
+
         {
-            glGenBuffers(1, &VBO);
-            glBindBuffer(GL_ARRAY_BUFFER, VBO);
-            // Set up vertex data (and buffer(s)) and attribute pointers
-            glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-            //https://learnopengl-cn.readthedocs.io/zh/latest/01%20Getting%20started/04%20Hello%20Triangle/
-            glVertexAttribPointer(
-                    // location in shader
-                    0,
-                    // size
-                    3,
-                    // type
-                    GL_FLOAT,
-                    // normalize to [-1, 1]
-                    GL_FALSE,
-                    // stride (length of each element)
-                    8 * sizeof(GLfloat),
-                    // offset?
-                    nullptr
-            );
-            glVertexAttribPointer(
-                    // location in shader
-                    1,
-                    // size
-                    3,
-                    // type
-                    GL_FLOAT,
-                    // normalize to [-1, 1]
-                    GL_FALSE,
-                    // stride (length of each element)
-                    8 * sizeof(GLfloat),
-                    // offset?
-                    (void *) (3 * sizeof(GLfloat))
-            );
-            glVertexAttribPointer(
-                    // location in shader
-                    2,
-                    // size
-                    2,
-                    // type
-                    GL_FLOAT,
-                    // normalize to [-1, 1]
-                    GL_FALSE,
-                    // stride (length of each element)
-                    8 * sizeof(GLfloat),
-                    // offset?
-                    (void *) (6 * sizeof(GLfloat))
-            );
-            glEnableVertexAttribArray(0);
-            glEnableVertexAttribArray(1);
-            glEnableVertexAttribArray(2);
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-            {
-                // create index for VBO
-                glGenBuffers(1, &EBO);
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-                glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-            }
-
-            // release bound VAO
-            glBindVertexArray(0);
+            // create index for VBO
+            auto eboScope = shaderMachine.useElementBufferObject();
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
         }
     }
 
@@ -163,8 +124,8 @@ public:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         std::vector<unsigned char> image;
         unsigned width;
@@ -200,22 +161,20 @@ public:
         glGenerateMipmap(GL_TEXTURE_2D);
         image.clear();
         glBindTexture(GL_TEXTURE_2D, 0);
+        glCheckError();
     }
 
     ~TextureRenderer() override {
-        glDeleteVertexArrays(1, &VAO);
-        glDeleteBuffers(1, &VBO);
-        glDeleteBuffers(1, &EBO);
         glDeleteTextures(1, &texture);
     }
 
     void render() override {
         glBindTexture(GL_TEXTURE_2D, texture);
-        gl::Scope p(shaderProgram);
-        glBindVertexArray(VAO);
+        gl::Scope p(shaderMachine);
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glCheckError();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        glCheckError();
 
         glBindVertexArray(0);
     }
