@@ -6,7 +6,7 @@
 * Life with Passion, Code with Creativity.
 * </pre>
 */
-#include "index.h"
+#include "AxisRender.h"
 
 static constexpr auto vertexShader = R"(
 #version 330 core
@@ -16,8 +16,11 @@ layout(location = 1) in vec3 color;
 
 out vec3 LineColor;
 
+uniform mat4 projection;
+uniform mat4 view;
+
 void main() {
-    gl_Position = vec4(point, 1.0f);
+    gl_Position = projection * view * vec4(point, 1.0f);
     LineColor = color;
 }
 
@@ -33,22 +36,28 @@ void main() {
 }
 )";
 
+static constexpr float FAR = 1000;
+
 static GLfloat points[36]{
         // -x start | color
-        -1.0f, 0.0f, 0.0f,/**/ 1.0f, 0.0f, 0.0f,
+        -FAR, 0.0f, 0.0f,/**/ 1.0, 0.0f, 0.0f,
         // +x end   | color
-        1.0f, 0.0f, 0.0f, /**/ 1.0f, 0.0f, 0.0f,
+        FAR, 0.0f, 0.0f, /**/ 1.0, 0.0f, 0.0f,
         // -y start | color
-        0.0f, -1.0f, 0.0f,/**/ 0.0f, 1.0f, 0.0f,
+        0.0f, -FAR, 0.0f,/**/ 0.0f, 1.0, 0.0f,
         // +y end   | color
-        0.0f, 1.0f, 0.0f, /**/ 0.0f, 1.0f, 0.0f,
+        0.0f, FAR, 0.0f, /**/ 0.0f, 1.0, 0.0f,
         // -z start | color,
-        0.0f, 0.0f, -1.0f,/**/ 0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, -FAR,/**/ 0.0f, 0.0f, 1.0,
         // +z end   | color
-        0.0f, 0.0f, 1.0f, /**/ 0.0f, 0.0f, 1.0f
+        0.0f, 0.0f, FAR, /**/ 0.0f, 0.0f, 1.0
 };
 
-AxisRenderer::AxisRenderer() : shaderMachine(vertexShader, fragmentShader) {
+AxisRenderer::AxisRenderer() : shaderMachine(vertexShader, fragmentShader, [](auto &p, auto &u) {
+    u.projection = p.getUniformLocation("projection");
+    u.view = p.getUniformLocation("view");
+}) {
+
     if (!shaderMachine.success()) {
         std::cerr << shaderMachine.getCompileLog() << std::endl;
     }
@@ -62,12 +71,20 @@ AxisRenderer::AxisRenderer() : shaderMachine(vertexShader, fragmentShader) {
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
 
+    setTranslate(glm::identity<glm::mat4>(), glm::identity<glm::mat4>());
     glCheckError();
 }
 
 void AxisRenderer::render(float width, float height) {
     gl::Scope s(shaderMachine);
     glDrawArrays(GL_LINES, 0, 6);
+}
+
+void AxisRenderer::setTranslate(const glm::mat4 &projection, const glm::mat4 &view) {
+    gl::Scope s(shaderMachine);
+
+    glUniformMatrix4fv(shaderMachine.extra.projection, 1, false, glm::value_ptr(projection));
+    glUniformMatrix4fv(shaderMachine.extra.view, 1, false, glm::value_ptr(view));
 }
 
 Renderer *makeAxisRenderer() {

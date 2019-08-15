@@ -16,6 +16,7 @@
 
 #include "index.h"
 #include "glhelper.h"
+#include "AxisRender.h"
 #include "../ext/lodepng/lodepng.h"
 
 constexpr auto vertexShader = R"(
@@ -274,8 +275,6 @@ public:
     void render(float width, float height) override {
         if (!shaderMachine.success()) return;
 
-        axisRenderer.render(width, height);
-
         gl::Scope p(shaderMachine);
 
         glCheckError();
@@ -295,18 +294,19 @@ public:
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), width / height, 0.1f, 100.0f);
         auto radians = (std::chrono::duration_cast<std::chrono::milliseconds>(
                 std::chrono::system_clock::now().time_since_epoch()).count() % 10000) * 0.001f;
-        glm::mat4 model = glm::rotate(glm::identity<glm::mat4>(), radians, glm::vec3(0.5f, 1.0f, 0.0f));
+        // glm::mat4 model = glm::rotate(glm::identity<glm::mat4>(), radians, glm::vec3(0.5f, 1.0f, 0.0f));
 
         auto radius = 10.0f;
         auto camX = std::sinf(radians) * radius;
+        auto camY = camX;
         auto camZ = std::cosf(radians) * radius;
         glm::mat4 view = glm::lookAt(
-                glm::vec3(camX, 0.0f, camZ),
+                glm::vec3(camX, camY, camZ),
                 glm::vec3(0.0f, 0.0f, 0.0f),
                 glm::vec3(0.0f, 1.0f, 0.0f)
         );
 
-        glUniformMatrix4fv(shaderMachine.extra.model, 1, GL_FALSE, glm::value_ptr(model));
+        // glUniformMatrix4fv(shaderMachine.extra.model, 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(shaderMachine.extra.view, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(shaderMachine.extra.projection, 1, GL_FALSE, glm::value_ptr(projection));
 
@@ -324,7 +324,7 @@ public:
         };
 
         for (GLuint i = 0; i < 10; i++) {
-            glm::mat4 model = glm::identity<glm::mat4>();
+            auto model = glm::identity<glm::mat4>();
             model = glm::translate(model, cubePositions[i]);
             GLfloat angle = 20.0f * i + radians;
             model = glm::rotate(model, angle, glm::vec3(1.0f, 0.3f, 0.5f));
@@ -334,7 +334,8 @@ public:
         }
         glCheckError();
 
-        glBindVertexArray(0);
+        axisRenderer.setTranslate(projection, view);
+        axisRenderer.render(width, height);
     }
 
 };
