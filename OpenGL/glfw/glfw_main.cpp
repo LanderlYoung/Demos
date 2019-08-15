@@ -78,6 +78,9 @@ int main() {
     auto renderer = std::unique_ptr<Renderer>(makeRenderer());
     glfwSetWindowUserPointer(window, renderer.get());
 
+    // 开启深度测试
+
+    glEnable(GL_DEPTH_TEST);
     // Game loop
     while (!glfwWindowShouldClose(window)) {
         // Check if any events have been activated (key pressed, mouse moved etc.)
@@ -87,7 +90,7 @@ int main() {
         // Render
         // Clear the color buffer
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         renderer->render(width, height);
 
