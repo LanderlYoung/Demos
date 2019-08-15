@@ -235,7 +235,7 @@ public:
         }
     }
 
-    void render() override {
+    void render(float width, float height) override {
         if (!shaderMachine.success()) return;
 
         gl::Scope p(shaderMachine);

@@ -125,7 +125,7 @@ public:
         }
     }
 
-    void render() override {
+    void render(float width, float height) override {
         gl::Scope p(shaderProgram);
         glBindVertexArray(VAO);
 
