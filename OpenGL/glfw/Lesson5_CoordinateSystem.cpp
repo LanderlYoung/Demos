@@ -119,13 +119,15 @@ private:
             0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
             -0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
             -0.5f, 0.5f, -0.5f, 0.0f, 1.0f
-    };;
+    };
 
     static unsigned loadImage(const std::string &name, std::vector<unsigned char> &image, unsigned &width, unsigned &height) {
         std::string base = __FILE__;
         auto file = base.substr(0, base.rfind('/') + 1) + "assets/" + name;
         return lodepng::decode(image, width, height, file, LodePNGColorType::LCT_RGB);
     }
+
+    AxisRenderer axisRenderer;
 
 public:
     CoordinateSystemRenderer() : shaderMachine(vertexShader, fragmentShader, [](auto &p, auto &u) {
@@ -136,7 +138,7 @@ public:
         u.model = p.getUniformLocation("model");
         u.view = p.getUniformLocation("view");
         u.projection = p.getUniformLocation("projection");
-    }) {
+    }), axisRenderer() {
         if (!shaderMachine.success()) {
             std::cerr << "compile shader failed " << shaderMachine.getCompileLog() << std::endl;
             return;
@@ -271,6 +273,8 @@ public:
 
     void render(float width, float height) override {
         if (!shaderMachine.success()) return;
+
+        axisRenderer.render(width, height);
 
         gl::Scope p(shaderMachine);
 

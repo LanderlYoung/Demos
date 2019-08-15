@@ -21,7 +21,7 @@ add_executable(glfw_app
         Lesson2_Shader.cpp
         Lesson3_Texture.cpp
         Lesson4_Transformations.cpp
-        Lesson5_CoordinateSystem.cpp)
+        Lesson5_CoordinateSystem.cpp AxisRenderer.cpp)
 target_include_directories(glfw_app PUBLIC
         ${GLEW_INCLUDE_DIRS}
         ${OPENGL_INCLUDE_DIR})

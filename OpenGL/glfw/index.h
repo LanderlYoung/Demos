@@ -16,6 +16,7 @@
 #include <GLFW/glfw3.h>
 
 #include "utils.h"
+#include "glhelper.h"
 
 class Renderer {
 public:
@@ -30,6 +31,16 @@ public:
     }
 };
 
+class AxisRenderer : public Renderer{
+private:
+    gl::ShaderMachine<false> shaderMachine;
+public:
+    AxisRenderer();
+    void render(float width, float height) override;
+};
+
+Renderer *makeAxisRenderer();
+
 Renderer *makeTriangleRenderer();
 
 Renderer *makeRectangleRenderer();
@@ -42,6 +53,7 @@ Renderer *makeTransformationsRenderer();
 
 Renderer *makeCoordinateSystemRenderer();
 
+//constexpr auto makeRenderer = makeAxisRenderer;
 //constexpr auto makeRenderer = makeTriangleRenderer;
 //constexpr auto makeRenderer = makeRectangleRenderer;
 //constexpr auto makeRenderer = makeShaderRenderer;
