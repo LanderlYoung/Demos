@@ -290,17 +290,36 @@ public:
 
         glm::mat4 view = glm::translate(glm::identity<glm::mat4>(), glm::vec3(0.0f, 0.0f, -3.0f));
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), width / height, 0.1f, 100.0f);
-        glm::mat4 model = glm::rotate(
-                glm::identity<glm::mat4>(),
-                (std::chrono::duration_cast<std::chrono::milliseconds>(
-                        std::chrono::system_clock::now().time_since_epoch()).count() % 10000) * 0.001f,
-                glm::vec3(1.0f, 0.0f, 0.0f));
+        auto radians = (std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::system_clock::now().time_since_epoch()).count() % 10000) * 0.001f;
+        glm::mat4 model = glm::rotate(glm::identity<glm::mat4>(), radians, glm::vec3(1.0f, 0.0f, 0.0f));
 
         glUniformMatrix4fv(shaderMachine.extra.model, 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(shaderMachine.extra.view, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(shaderMachine.extra.projection, 1, GL_FALSE, glm::value_ptr(projection));
 
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glm::vec3 cubePositions[] = {
+                glm::vec3(0.0f, 0.0f, 0.0f),
+                glm::vec3(2.0f, 5.0f, -15.0f),
+                glm::vec3(-1.5f, -2.2f, -2.5f),
+                glm::vec3(-3.8f, -2.0f, -12.3f),
+                glm::vec3(2.4f, -0.4f, -3.5f),
+                glm::vec3(-1.7f, 3.0f, -7.5f),
+                glm::vec3(1.3f, -2.0f, -2.5f),
+                glm::vec3(1.5f, 2.0f, -2.5f),
+                glm::vec3(1.5f, 0.2f, -1.5f),
+                glm::vec3(-1.3f, 1.0f, -1.5f)
+        };
+
+        for (GLuint i = 0; i < 10; i++) {
+            glm::mat4 model = glm::identity<glm::mat4>();
+            model = glm::translate(model, cubePositions[i]);
+            GLfloat angle = 20.0f * i;
+            model = glm::rotate(model, angle, glm::vec3(1.0f, 0.3f, 0.5f));
+            glUniformMatrix4fv(shaderMachine.extra.model, 1, GL_FALSE, glm::value_ptr(model));
+
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
         glCheckError();
 
         glBindVertexArray(0);
