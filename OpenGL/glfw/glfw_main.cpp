@@ -1,4 +1,6 @@
 #include <iostream>
+#include <thread>
+#include "MessageQueue.h"
 
 // GLEW
 #pragma clang diagnostic push
@@ -23,6 +25,8 @@ void APIENTRY glDebugOutput(
 
 // Function prototypes
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
+
+void testMessageQueue();
 
 // Window dimensions
 const GLuint WIDTH = 800, HEIGHT = 600;
@@ -75,6 +79,8 @@ int main() {
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
     }
 
+    testMessageQueue();
+
     auto renderer = std::unique_ptr<Renderer>(makeRenderer());
     glfwSetWindowUserPointer(window, renderer.get());
 
@@ -102,6 +108,54 @@ int main() {
     // Terminate GLFW, clearing any resources allocated by GLFW.
     glfwTerminate();
     return 0;
+}
+
+MessageQueue queue;
+
+void handler(const Message &msg) {
+    auto now = std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::system_clock::now().time_since_epoch()).count();
+    int64_t past = (static_cast<int64_t>(msg.data1) << 32u) | msg.data2;
+    auto diff = now - past;
+
+    Message m(msg);
+    m.data1 = now >> 32;
+    m.data2 = now;
+    queue.postMessageDelayed(m, m.data0);
+
+    std::cout << "interval " << diff << std::endl;
+}
+
+void testMessageQueue() {
+    std::thread queueThread([&]() {
+        queue.loopQueue();
+    });
+
+    std::thread([&]() {
+        Message m(nullptr, nullptr);
+        while (true) queue.postMessage(m);
+    }).detach();
+
+    std::thread([&]() {
+        Message m(nullptr, nullptr);
+        while (true) queue.postMessage(m);
+    }).detach();
+
+    std::thread([&]() {
+        Message m(nullptr, nullptr);
+        while (true) queue.postMessage(m);
+    }).detach();
+
+    Message interval(handler, nullptr);
+    interval.data0 = 200;
+    queue.postMessageDelayed(interval, interval.data0);
+
+//    Message m(nullptr, nullptr);
+//    for (auto i = 0; i < 100000000; i++) {
+//        queue.postMessageDelayed(m, 1000 * 1000);
+//    }
+
+    queueThread.join();
 }
 
 // Is called whenever a key is pressed/released via GLFW

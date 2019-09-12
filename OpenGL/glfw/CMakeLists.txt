@@ -25,6 +25,9 @@ add_executable(glfw_app
         Lesson3_Texture.cpp
         Lesson4_Transformations.cpp
         Lesson5_CoordinateSystem.cpp
+
+        MessageQueue.h
+        MessageQueue.cpp
         )
 target_include_directories(glfw_app PUBLIC
         ${GLEW_INCLUDE_DIRS}
