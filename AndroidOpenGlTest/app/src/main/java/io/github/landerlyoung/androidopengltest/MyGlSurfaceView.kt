@@ -2,10 +2,12 @@ package io.github.landerlyoung.androidopengltest
 
 import android.content.Context
 import android.opengl.EGL14
+import android.opengl.GLES20
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
 import android.util.AttributeSet
+import android.util.Log
 import android.view.Choreographer
 import android.view.Choreographer.FrameCallback
 import android.view.SurfaceHolder
@@ -26,15 +28,23 @@ import javax.microedition.khronos.egl.EGLContext
 class MyGlSurfaceView(context: Context, attributeSet: AttributeSet) :
     SurfaceView(context, attributeSet) {
 
+    companion object {
+        const val TAG = "MyGlSurfaceView"
+    }
+
     private val glThread = HandlerThread("GlThread").also { it.start() }
     private val glHandler = Handler(glThread.looper)
     private val mainHandler = Handler(Looper.getMainLooper())
 
-    var renderer: (() -> Unit)? = null
+    var renderer: ((width: Int, height: Int) -> Unit)? = { w, h ->
+        GLES20.glClearColor(1f, 0f, 0f, 1f)
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+    }
 
     init {
         holder.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceCreated(holder: SurfaceHolder?) {
+                Log.i(TAG, "surfaceCreated")
                 glHandler.post(::createEglContext)
             }
 
@@ -44,13 +54,35 @@ class MyGlSurfaceView(context: Context, attributeSet: AttributeSet) :
                 width: Int,
                 height: Int
             ) {
+                Log.i(TAG, "surfaceChanged format:$format width:$width height:$height")
                 glHandler.post { surfaceChanged(width, height) }
             }
 
             override fun surfaceDestroyed(holder: SurfaceHolder?) {
-                glThread.quit()
+                Log.i(TAG, "surfaceDestroyed")
+//                glThread.quit()
             }
         })
+    }
+
+    lateinit var swap: () -> Unit
+    var vSyncScheduled = false
+
+
+    private fun scheduleDraw() {
+        mainHandler.post {
+            val frameCallback = object : FrameCallback {
+                override fun doFrame(frameTimeNanos: Long) {
+                    glHandler.post {
+                        renderer?.invoke(0, 0)
+                        swap()
+                    }
+                    Choreographer.getInstance().postFrameCallback(this)
+                }
+
+            }
+            Choreographer.getInstance().postFrameCallback(frameCallback)
+        }
     }
 
     private fun createEglContext() {
@@ -86,28 +118,14 @@ class MyGlSurfaceView(context: Context, attributeSet: AttributeSet) :
         val surface = egl.eglCreateWindowSurface(display, outConfig[0], holder, null)
         egl.eglMakeCurrent(display, surface, surface, context)
 
-        scheduleDraw {
-            egl.eglSwapBuffers(display, surface)
-        }
-    }
+        swap = { egl.eglSwapBuffers(display, surface) }
 
-    private fun scheduleDraw(swap: () -> Unit) {
-        mainHandler.post {
-            val frameCallback = object : FrameCallback {
-                override fun doFrame(frameTimeNanos: Long) {
-                    glHandler.post {
-                        renderer?.invoke()
-                        swap()
-                    }
-                    Choreographer.getInstance().postFrameCallback(this)
-                }
-
-            }
-            Choreographer.getInstance().postFrameCallback(frameCallback)
+        if (!vSyncScheduled) {
+            scheduleDraw()
         }
     }
 
     private fun surfaceChanged(width: Int, height: Int) {
-
+//        createEglContext()
     }
 }
