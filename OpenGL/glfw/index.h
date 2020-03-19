@@ -10,7 +10,6 @@
 #pragma once
 
 // include gl header
-#define GLEW_STATIC
 #include <GL/glew.h>
 // glfw
 #include <GLFW/glfw3.h>
