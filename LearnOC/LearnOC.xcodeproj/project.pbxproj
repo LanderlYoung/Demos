@@ -12,6 +12,7 @@
 		6F7C4B4326E72E4C00C87E6B /* SimpleTest1.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F7C4B4226E72E4C00C87E6B /* SimpleTest1.m */; };
 		6F7C4B4626E72EF700C87E6B /* PropertyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F7C4B4526E72EF700C87E6B /* PropertyTest.m */; };
 		6F7C4B4926E73B9700C87E6B /* KVOTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F7C4B4826E73B9700C87E6B /* KVOTest.m */; };
+		6FB2B93C28BE2F4C0091A637 /* MethodSwizzling.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FB2B93B28BE2F4C0091A637 /* MethodSwizzling.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -37,6 +38,8 @@
 		6F7C4B4526E72EF700C87E6B /* PropertyTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PropertyTest.m; sourceTree = "<group>"; };
 		6F7C4B4726E73B9700C87E6B /* KVOTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KVOTest.h; sourceTree = "<group>"; };
 		6F7C4B4826E73B9700C87E6B /* KVOTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KVOTest.m; sourceTree = "<group>"; };
+		6FB2B93A28BE2F4C0091A637 /* MethodSwizzling.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MethodSwizzling.h; sourceTree = "<group>"; };
+		6FB2B93B28BE2F4C0091A637 /* MethodSwizzling.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MethodSwizzling.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +81,8 @@
 				6F7C4B4526E72EF700C87E6B /* PropertyTest.m */,
 				6F7C4B4726E73B9700C87E6B /* KVOTest.h */,
 				6F7C4B4826E73B9700C87E6B /* KVOTest.m */,
+				6FB2B93A28BE2F4C0091A637 /* MethodSwizzling.h */,
+				6FB2B93B28BE2F4C0091A637 /* MethodSwizzling.m */,
 			);
 			path = LearnOC;
 			sourceTree = "<group>";
@@ -142,6 +147,7 @@
 				6F1A864626CA841300D56F5E /* main.m in Sources */,
 				6F7C4B4626E72EF700C87E6B /* PropertyTest.m in Sources */,
 				6F7C4B4926E73B9700C87E6B /* KVOTest.m in Sources */,
+				6FB2B93C28BE2F4C0091A637 /* MethodSwizzling.m in Sources */,
 				6F7C4B4326E72E4C00C87E6B /* SimpleTest1.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
