@@ -12,14 +12,16 @@
 #import "PropertyTest.h"
 #import "KVOTest.h"
 #import "MethodSwizzling.h"
+#import "DeallocOrder.h"
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
         // insert code here...
         NSLog(@"Hello, World!");
-        NSLog([[NSBundle mainBundle] bundleURL].path);
+        NSLog(@"%@", [[NSBundle mainBundle] bundleURL].path);
         
         id myClass = [SimpleTest1 runTest];
+        [DeallocOrder test];
 
         NSLog(@"================");
         NSString *message = [myClass inspect];
