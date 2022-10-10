@@ -10,6 +10,10 @@
 
 @implementation MethodSwizzling
 
++ (void)initialize {
+    NSLog(@"INIT");
+}
+
 - (void)hello {
     NSLog(@"%@ hello %@", NSStringFromClass(self.class), NSStringFromSelector(_cmd));
 }
@@ -39,7 +43,7 @@
             Method helloMethod = class_getInstanceMethod(clazz, @selector(hello));
             Method wrapHelloMethod = class_getInstanceMethod(clazz, @selector(wrapHello));
             IMP realHelloImp = method_getImplementation(helloMethod);
-           
+            
             method_exchangeImplementations(helloMethod, wrapHelloMethod);
             
             IMP wrapHelloImp2 = method_getImplementation(wrapHelloMethod);
