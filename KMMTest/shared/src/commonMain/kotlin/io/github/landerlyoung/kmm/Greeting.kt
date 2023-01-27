@@ -13,6 +13,9 @@ import kotlin.coroutines.cancellation.CancellationException
 class Greeting {
   private val platform: Platform = getPlatform()
 
+  // used to track iOS dealloc calling stack
+  var any: Any? = null
+
   @Throws(CancellationException::class)
   suspend fun greeting(): String {
     val rockets: List<RocketLaunch> =
