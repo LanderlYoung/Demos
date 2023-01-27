@@ -13,6 +13,7 @@ extension ContentView {
     class ViewModel: ObservableObject {
         @Published var text = "Loading..."
             init() {
+                KMMBridge.mmBenchmark()
                 KMMBridge.getLastSuccessfulLaunch { greeting, error in
                     if let greeting = greeting {
                         self.text = greeting

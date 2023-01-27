@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)getLastSuccessfulLaunchWithCallback:(void(^)(NSString * _Nullable, NSError * _Nullable)) callback;
 
++ (void)mmBenchmark;
+
 @end
 
 NS_ASSUME_NONNULL_END
