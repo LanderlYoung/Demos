@@ -18,7 +18,9 @@ kotlin {
         ios.deploymentTarget = "14.1"
         podfile = project.file("../iosApp/Podfile")
         framework {
-            baseName = "shared"
+            // framework name, also prefix for Obj-c class
+            // KtInt
+            baseName = "Kt"
         }
     }
 
