@@ -36,6 +36,11 @@
     }];
 }
 
++ (void)benchmark {
+    [self mmBenchmark];
+    [self callBenchmark];
+}
+
 static const NSInteger kBenchmarkCount = 1000 * 1000;
 
 // returns ms
@@ -71,4 +76,39 @@ static const NSInteger kBenchmarkCount = 1000 * 1000;
           @"allNewAndFinalize:%.2fms",
           ktNew, oc2ktNew, ocNew, allNew, allNewAndFinalize);
 }
+
++ (void)callBenchmark {
+    NSTimeInterval baseline = [self benchmarkRunBlock: ^{}];
+    NSTimeInterval ocCall = [self benchmarkRunBlock:^{
+        [KMMBridge addA:1 b:2];
+    }];
+    
+    KtGcTestCompanion* companion = KtGcTest.companion;
+    NSTimeInterval oc2ktCall = [self benchmarkRunBlock:^{
+        [companion addA:1 b:2];
+    }];
+    
+    NSTimeInterval ktCall = [KtGcTest.companion benchmarkAddCount:kBenchmarkCount];
+    
+    NSTimeInterval cCall = [self benchmarkRunBlock:^{
+        add(1, 2);
+    }];
+    
+    NSLog(@"\nEnd method call test \n"
+          @"baseline:%.2fms\n"
+          @"ocCall:%.2fms\n"
+          @"co2ktCall:%.2fms\n"
+          @"ktCall:%.2fms\n"
+          @"cCall:%.2fms\n",
+          baseline, ocCall, oc2ktCall, ktCall, cCall);
+}
+
++ (int)addA:(int) a b:(int) b {
+    return a + b;
+}
+
+static int add(int a, int b) {
+    return a + b;
+}
+
 @end
