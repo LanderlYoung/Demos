@@ -64,13 +64,13 @@ private:
     static thread_local std::vector<Scope::Usable *> _usableStack;
     Usable *usable;
 
+    explicit Scope(Usable *usable) noexcept;
+
 public:
 
     DISALLOW_COPY_ASSIGN(Scope);
 
     DISALLOW_DYNAMIC_CONSTRUCT(Scope);
-
-    explicit Scope(Usable *usable) noexcept;
 
     explicit Scope(Usable &usable) noexcept: Scope(&usable) {}
 
@@ -162,6 +162,123 @@ public:
     ShaderProgramExtra(ShaderProgramExtra &&move) :
             ShaderProgram(move) {
         location = std::move(move.location);
+    }
+};
+
+
+template<typename Extra, bool useIndex>
+class ShaderMachine : public ShaderProgramExtra<Extra> {
+
+private:
+    GLuint vertexArrayObject = 0;
+    GLuint vertexBufferObject = 0;
+    GLuint elementBufferObject = 0;
+
+    template<int UsableType>
+    class __Usable : public Scope::Usable {
+        GLuint &i;
+
+        __Usable(GLuint &i) : i(i) {
+        }
+
+        void use() override {
+            switch (UsableType) {
+                case 1:
+                    glBindVertexArray(i);
+                    break;
+                case 2:
+                    glBindBuffer(GL_ARRAY_BUFFER, i);
+                    break;
+                case 3:
+                    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, i);
+                    break;
+            }
+        }
+
+        void unuse() override {
+            switch (UsableType) {
+                case 1:
+                    glBindVertexArray(0);
+                    break;
+                case 2:
+                    glBindBuffer(GL_ARRAY_BUFFER, 0);
+                    break;
+                case 3:
+                    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+                    break;
+            }
+        }
+    };
+
+    __Usable<0> vertexArrayObjectUsable;
+    __Usable<1> vertexBufferObjectUsable;
+    __Usable<2> elementBufferObjectUsable;
+
+    ShaderMachine() :
+            vertexArrayObjectUsable(vertexArrayObject),
+            vertexBufferObjectUsable(vertexBufferObjectUsable),
+            elementBufferObjectUsable(elementBufferObject) {
+        glGenVertexArrays(1, &vertexArrayObject);
+        glGenBuffers(1, &vertexBufferObject);
+        if (useIndex) {
+            glGenBuffers(1, &elementBufferObject);
+        }
+    }
+
+public:
+
+    ShaderMachine(
+            const std::string_view &vertexShader,
+            const std::string_view &fragmentShader) :
+            ShaderProgramExtra<Extra>(vertexShader, fragmentShader),
+            ShaderMachine() {
+    }
+
+    ShaderMachine(
+            const std::string_view &vertexShader,
+            const std::string_view &fragmentShader,
+            const std::function<void(const ShaderProgram &, Extra &)> &uniformInit) :
+            ShaderProgramExtra<Extra>(vertexShader, fragmentShader, uniformInit),
+            ShaderMachine() {
+    }
+
+    ShaderMachine(ShaderMachine &&move) noexcept :
+            ShaderProgramExtra<Extra>(move),
+            vertexArrayObject(move.vertexArrayObject),
+            vertexBufferObject(move.vertexBufferObject),
+            elementBufferObject(move.elementBufferObject),
+            vertexArrayObjectUsable(vertexArrayObject),
+            vertexBufferObjectUsable(vertexBufferObjectUsable),
+            elementBufferObjectUsable(elementBufferObject) {
+        move.vertexArrayObject = 0;
+        move.vertexBufferObject = 0;
+        move.elementBufferObject = 0;
+    }
+
+    ~ShaderMachine() {
+        glDeleteVertexArrays(1, &vertexArrayObject);
+        glDeleteBuffers(1, &vertexBufferObject);
+        glDeleteBuffers(1, &elementBufferObject);
+    }
+
+    DISALLOW_COPY_ASSIGN(ShaderMachine);
+
+    Scope &&useVertexArrayObject() { return std::move(gl::Scope(vertexArrayObjectUsable)); }
+
+    Scope &&useVertexBufferObject() { return std::move(gl::Scope(vertexBufferObjectUsable)); }
+
+    Scope &&useElementBufferObject() { return std::move(gl::Scope(elementBufferObjectUsable)); }
+
+    void use() override {
+        vertexArrayObjectUsable.use();
+        vertexBufferObjectUsable.use();
+        elementBufferObjectUsable.use();
+    }
+
+    void unuse() override {
+        vertexArrayObjectUsable.unuse();
+        vertexBufferObjectUsable.unuse();
+        elementBufferObjectUsable.unuse();
     }
 };
 
