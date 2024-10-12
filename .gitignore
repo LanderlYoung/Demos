@@ -65,6 +65,7 @@ classes
 ios/KotlinMppIos.xcodeproj/project.xcworkspace/xcuserdata/
 ios/KotlinMppIos.xcodeproj/xcuserdata/
 ios/KotlinMppIos.xcworkspace/xcuserdata
+xcuserdata
 
 #cocoapods
 Pods
@@ -80,3 +81,53 @@ Podfile.lock
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+#*#
+*.Makefile
+*.a
+*.exe
+*.idb
+*.lib
+*.log
+*.map
+*.mk
+*.ncb
+*.pdb
+*.pyc
+*.scons*
+*.sdf
+*.sln
+*.so
+*.suo
+*.user
+*.vcproj
+*.vcxproj
+*.vcxproj.filters
+*~
+.#*
+.*.sw?
+.ccls-cache
+.cpplint-cache
+.cproject
+.gclient_entries
+.gdb_history
+.landmines
+.pydevproject
+.settings
+.torquelint-cache
+
+# build
+build
+cmake-build-*
+
+# IDE
+.idea
+.project
+.vscode
+.vs
+/compile_commands.json
+/.cache/clangd
+xcuserdata
+
+# js
+node_modules
+.yarn-meta
