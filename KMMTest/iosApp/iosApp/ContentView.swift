@@ -1,5 +1,5 @@
 import SwiftUI
-import shared
+import Kt
 
 struct ContentView: View {
     @ObservedObject private(set) var viewModel: ViewModel
