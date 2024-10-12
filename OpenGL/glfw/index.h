@@ -11,7 +11,6 @@
 
 // include gl header
 #define GLEW_STATIC
-
 #include <GL/glew.h>
 
 class Renderer {

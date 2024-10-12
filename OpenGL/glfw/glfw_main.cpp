@@ -18,7 +18,6 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 // Window dimensions
 const GLuint WIDTH = 800, HEIGHT = 600;
 
-
 // The MAIN function, from here we start the application and run the game loop
 int main()
 {
@@ -58,11 +57,12 @@ int main()
     auto render = makeTriangleRenderer();
     // Game loop
     while (!glfwWindowShouldClose(window)) {
-        // Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
+        // Check if any events have been activated (key pressed, mouse moved etc.)
+        // and call corresponding response functions
         glfwPollEvents();
 
         // Render
-        // Clear the colorbuffer
+        // Clear the color buffer
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -79,7 +79,7 @@ int main()
 }
 
 // Is called whenever a key is pressed/released via GLFW
-void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode)
+void key_callback(GLFWwindow *window, int key, __unused int scancode, int action, __unused int mode)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
