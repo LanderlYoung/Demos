@@ -87,9 +87,10 @@ public:
                     // offset?
                     nullptr
             );
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
             glEnableVertexAttribArray(0);
 
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
             // release bound VBO
 
             // release bound VAO
@@ -107,8 +108,12 @@ public:
         glBindVertexArray(VAO);
 
         // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-        // release bound array
+
+        // glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        // glDrawArrays(GL_TRIANGLES, 0, 4);
+
         glBindVertexArray(0);
     }
 
