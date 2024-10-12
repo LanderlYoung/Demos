@@ -6,7 +6,8 @@ add_executable(glut_app
         index.h
         basic.cpp
         polygon.cpp
-        color.cpp)
+        color.cpp
+        matrix.cpp)
 
 target_include_directories(glut_app PUBLIC ${OPENGL_INCLUDE_DIR})
 target_link_libraries(glut_app ${OPENGL_gl_LIBRARY})
