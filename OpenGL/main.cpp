@@ -1,8 +1,5 @@
 #include "index.h"
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-
 constexpr auto WINDOW_SIZE = 400;
 
 void init()
@@ -25,9 +22,7 @@ int main(int argc, char **argv)
     glutCreateWindow("An Example OpenGL Program");
 
     init();
-    glutDisplayFunc(polygonStipple);
+    glutDisplayFunc(colorShadeModel);
     glutMainLoop();
     return 0;
 }
-
-#pragma clang diagnostic pop
