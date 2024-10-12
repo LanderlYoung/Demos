@@ -4,6 +4,8 @@ set(CMAKE_CXX_STANDARD 17)
 find_package(glfw3 3.3 REQUIRED)
 find_package(GLEW REQUIRED)
 
+include_directories(../ext)
+
 add_executable(glfw_app
         utils.h
         glhelper.h
