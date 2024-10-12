@@ -189,3 +189,11 @@ bubbleSort'' xs = bubbleSort'' initialElements ++ [lastElement]
                           initialElements = init swappedxs
                           lastElement = last swappedxs
 
+--hamming number
+ham = 1 : merge (merge (map (*2) ham) times3) (merge times3 (map (*5) ham))
+        where times3 = map (*3) ham
+              merge [] xs = xs
+              merge xs [] = xs
+              merge (x:xs) (y:ys) | x < y = x : merge xs (y:ys)
+                                  | x > y = y : merge (x:xs) ys
+                                  | otherwise = x : merge xs ys
