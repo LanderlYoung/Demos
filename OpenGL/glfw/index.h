@@ -32,4 +32,4 @@ Renderer *makeLesson2ShaderRenderer();
 
 Renderer *makeLesson3TextureRenderer();
 
-constexpr auto makeRenderer = makeLesson3TextureRenderer;
+constexpr auto makeRenderer = makeLesson2ShaderRenderer;
