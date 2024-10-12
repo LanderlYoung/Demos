@@ -55,5 +55,15 @@ class GcTest {
         }
       }.toDouble(DurationUnit.MILLISECONDS)
     }
+
+    fun add(a: Int, b: Int) = a + b
+
+    fun benchmarkAdd(count: Int): Double {
+      return measureTime {
+        repeat(count) {
+          add(1, 2)
+        }
+      }.toDouble(DurationUnit.MILLISECONDS)
+    }
   }
 }
