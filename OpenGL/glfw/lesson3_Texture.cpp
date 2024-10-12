@@ -211,7 +211,7 @@ public:
 
     void render() override {
         glBindTexture(GL_TEXTURE_2D, texture);
-        auto scope = shaderProgram.use();
+        gl::Scope p(shaderProgram);
         glBindVertexArray(VAO);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);

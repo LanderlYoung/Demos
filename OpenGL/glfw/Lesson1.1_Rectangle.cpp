@@ -109,7 +109,7 @@ public:
     }
 
     void render() override {
-        auto scope = shaderProgram.use();
+        gl::Scope p(shaderProgram);
         glBindVertexArray(VAO);
 
         {

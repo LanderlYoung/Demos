@@ -147,7 +147,7 @@ public:
     }
 
     void render() override {
-        auto scope = shaderProgram.use();
+        gl::Scope p(shaderProgram);
 
         glUniform1f(shaderProgram.location, 0.4f);
         glBindVertexArray(VAO);
