@@ -41,7 +41,7 @@ void main() {
 
 class LessonShaderRenderer : public Renderer {
 private:
-    gl::ShaderProgramWithUniform<GLuint> shaderProgram;
+    gl::ShaderProgramExtra<GLuint> shaderProgram;
     GLuint VBO_Position = 0;
     GLuint VAO = 0;
 //    GLfloat vertices[18]{
@@ -149,7 +149,7 @@ public:
     void render() override {
         auto scope = shaderProgram.use();
 
-        glUniform1f(shaderProgram.uniform, 0.4f);
+        glUniform1f(shaderProgram.location, 0.4f);
         glBindVertexArray(VAO);
 
         glDrawArrays(GL_TRIANGLES, 0, 3);
