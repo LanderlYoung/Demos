@@ -27,7 +27,7 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
 #ifdef __APPLE__
@@ -56,7 +56,7 @@ int main()
     glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height);
 
-    auto renderer = makeRenderer();
+    auto renderer = std::unique_ptr<Renderer>(makeRenderer());
     // Game loop
     while (!glfwWindowShouldClose(window)) {
         // Check if any events have been activated (key pressed, mouse moved etc.)
@@ -74,7 +74,6 @@ int main()
         glfwSwapBuffers(window);
     }
 
-    delete renderer;
     // Terminate GLFW, clearing any resources allocated by GLFW.
     glfwTerminate();
     return 0;

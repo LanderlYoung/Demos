@@ -37,18 +37,32 @@ in vec2 TexCoord;
 
 out vec4 color;
 
-uniform sampler2D ourTexture;
+//uniform sampler2D ourTexture;
+uniform sampler2D ourTexture1;
+uniform sampler2D ourTexture2;
 
 void main() {
-    color = texture(ourTexture, TexCoord);
+    // color = texture(ourTexture, TexCoord);
+
+    // fix inverse texture picture issue
+    vec2 inv = vec2(TexCoord.x, 1.0f -TexCoord.y);
+
+    // blend texture
+    // 1-0.2 first + 0.2 second
+    color = mix(texture(ourTexture1, inv), texture(ourTexture2, inv), 0.2);
 }
 
 )";
 
 class TextureRenderer : public Renderer {
 private:
-    gl::ShaderMachine<> shaderMachine;
-    GLuint texture = 0;
+    struct UniformLocation {
+        GLuint texture1;
+        GLuint texture2;
+    };
+    gl::ShaderMachine<true, UniformLocation> shaderMachine;
+    GLuint texture1 = 0;
+    GLuint texture2 = 0;
     GLfloat vertices[32]{
             //     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
             0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,   // 右上
@@ -62,14 +76,17 @@ private:
             1, 2, 3  // 第二个三角形
     };
 
-    static unsigned loadImage(std::vector<unsigned char> &image, unsigned &width, unsigned &height) {
+    static unsigned loadImage(const std::string &name, std::vector<unsigned char> &image, unsigned &width, unsigned &height) {
         std::string base = __FILE__;
-        auto file = base.substr(0, base.rfind('/') + 1) + "assets/container.png";
+        auto file = base.substr(0, base.rfind('/') + 1) + "assets/" + name;
         return lodepng::decode(image, width, height, file, LodePNGColorType::LCT_RGB);
     }
 
 public:
-    TextureRenderer() : shaderMachine(vertexShader, fragmentShader) {
+    TextureRenderer() : shaderMachine(vertexShader, fragmentShader, [](auto &p, auto &u) {
+        u.texture1 = p.getUniformLocation("ourTexture1");
+        u.texture2 = p.getUniformLocation("ourTexture2");
+    }) {
         if (!shaderMachine.success()) {
             std::cerr << "compile shader failed " << shaderMachine.getCompileLog() << std::endl;
             return;
@@ -117,62 +134,105 @@ public:
     }
 
     void prepareTexture() {
-        glGenTextures(1, &texture);
+        {
+            glGenTextures(1, &texture1);
 
-        glBindTexture(GL_TEXTURE_2D, texture);
+            glBindTexture(GL_TEXTURE_2D, texture1);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            // 前面提到的每个选项都可以使用glTexParameter*函数对单独的一个坐标轴设置（s、t（如果是使用3D纹理那么还有一个r）它们和x、y、z是等价的）
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            // 缩小filter minify
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            // 放大filter magnify
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        std::vector<unsigned char> image;
-        unsigned width;
-        unsigned height;
-        loadImage(image, width, height);
-        // https://learnopengl-cn.readthedocs.io/zh/latest/01%20Getting%20started/06%20Textures/
-        glTexImage2D(
-                // 第一个参数指定了纹理目标(Target)。
-                // 设置为GL_TEXTURE_2D意味着会生成与当前绑定的纹理
-                // 对象在同一个目标上的纹理（任何绑定到GL_TEXTURE_1D
-                // 和GL_TEXTURE_3D的纹理不会受到影响）。
-                GL_TEXTURE_2D,
-                // 第二个参数为纹理指定多级渐远纹理的级别，
-                // 如果你希望单独手动设置每个多级渐远纹理的级别的话。
-                // 这里我们填0，也就是基本级别。
-                0,
-                // 第三个参数告诉OpenGL我们希望把纹理储存为何种格式。
-                // 我们的图像只有RGB值，因此我们也把纹理储存为RGB值。
-                GL_RGB,
-                // 第四个和第五个参数设置最终的纹理的宽度和高度。
-                // 我们之前加载图像的时候储存了它们，所以我们使用对应的变量。
-                width, height,
-                // 下个参数应该总是被设为0（历史遗留问题）。
-                0,
-                // 第七第八个参数定义了源图的格式和数据类型。
-                // 我们使用RGB值加载这个图像，并把它们储存为char(byte)数组，
-                // 我们将会传入对应值。
-                GL_RGB, GL_UNSIGNED_BYTE,
-                // 最后一个参数是真正的图像数据。
-                image.data()
-        );
+            std::vector<unsigned char> image;
+            unsigned width;
+            unsigned height;
+            loadImage("container.png", image, width, height);
+            // https://learnopengl-cn.readthedocs.io/zh/latest/01%20Getting%20started/06%20Textures/
+            glTexImage2D(
+                    // 第一个参数指定了纹理目标(Target)。
+                    // 设置为GL_TEXTURE_2D意味着会生成与当前绑定的纹理
+                    // 对象在同一个目标上的纹理（任何绑定到GL_TEXTURE_1D
+                    // 和GL_TEXTURE_3D的纹理不会受到影响）。
+                    GL_TEXTURE_2D,
+                    // 第二个参数为纹理指定多级渐远纹理的级别，
+                    // 如果你希望单独手动设置每个多级渐远纹理的级别的话。
+                    // 这里我们填0，也就是基本级别。
+                    0,
+                    // 第三个参数告诉OpenGL我们希望把纹理储存为何种格式。
+                    // 我们的图像只有RGB值，因此我们也把纹理储存为RGB值。
+                    GL_RGB,
+                    // 第四个和第五个参数设置最终的纹理的宽度和高度。
+                    // 我们之前加载图像的时候储存了它们，所以我们使用对应的变量。
+                    width, height,
+                    // 下个参数应该总是被设为0（历史遗留问题）。
+                    0,
+                    // 第七第八个参数定义了源图的格式和数据类型。
+                    // 我们使用RGB值加载这个图像，并把它们储存为char(byte)数组，
+                    // 我们将会传入对应值。
+                    GL_RGB, GL_UNSIGNED_BYTE,
+                    // 最后一个参数是真正的图像数据。
+                    image.data()
+            );
 
-        glGenerateMipmap(GL_TEXTURE_2D);
-        image.clear();
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glCheckError();
+            glGenerateMipmap(GL_TEXTURE_2D);
+            glBindTexture(GL_TEXTURE_2D, 0);
+
+            image.clear();
+            glCheckError();
+        }
+
+        {
+            glGenTextures(1, &texture2);
+            glBindTexture(GL_TEXTURE_2D, texture2);
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+            std::vector<unsigned char> image;
+            unsigned width, height;
+            loadImage("awesomeface.png", image, width, height);
+
+            glTexImage2D(
+                    GL_TEXTURE_2D,
+                    0,
+                    GL_RGB,
+                    width, height,
+                    0,
+                    GL_RGB, GL_UNSIGNED_BYTE,
+                    image.data());
+            glGenerateMipmap(GL_TEXTURE_2D);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glCheckError();
+        }
     }
 
     ~TextureRenderer() override {
-        glDeleteTextures(1, &texture);
+        glDeleteTextures(1, &texture1);
     }
 
     void render() override {
-        glBindTexture(GL_TEXTURE_2D, texture);
+        if (!shaderMachine.success()) return;
+
+        glBindTexture(GL_TEXTURE_2D, texture1);
         gl::Scope p(shaderMachine);
 
         glCheckError();
+        // texture unit
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture1);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, texture2);
+
+        glUniform1i(shaderMachine.extra.texture1, 0);
+        glUniform1i(shaderMachine.extra.texture2, 1);
+
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
         glCheckError();
 
