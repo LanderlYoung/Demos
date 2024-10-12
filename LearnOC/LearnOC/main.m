@@ -12,7 +12,7 @@
 #import "PropertyTest.h"
 #import "KVOTest.h"
 #import "MethodSwizzling.h"
-#import "DeallocOrder.h"
+#import "DeallocOrderTest.h"
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
@@ -21,7 +21,7 @@ int main(int argc, const char * argv[]) {
         NSLog(@"%@", [[NSBundle mainBundle] bundleURL].path);
         
         id myClass = [SimpleTest1 runTest];
-        [DeallocOrder test];
+        [DeallocOrderTest test];
 
         NSLog(@"================");
         NSString *message = [myClass inspect];
@@ -32,11 +32,11 @@ int main(int argc, const char * argv[]) {
         KVOTest *kvo = [KVOTest runTest];
         
 //
-//        NSLog(@"================");
-//        NSLog(@"\n%@", [NSObject inspectClass:[NSArray class]]);
+        NSLog(@"================");
+        NSLog(@"\n%@", [NSObject inspectClass:[NSArray class]]);
 //
-//        NSLog(@"================");
-//        NSLog(@"\n%@", [NSObject inspectClass:[NSView class]]);
+        NSLog(@"================");
+        NSLog(@"\n%@", [NSObject inspectClass:[NSView class]]);
         
         NSString *s = @"The weather on \U0001F30D is \U0001F31E today.e\u0301";
             // The weather on 🌍 is 🌞 today.

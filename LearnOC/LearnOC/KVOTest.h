@@ -17,8 +17,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic) int propInt;
 @property(nonatomic) int propInt2;
-@property(nonatomic) NSString* propString;
-@property(nonatomic, readonly) NSNumber* porpNoBacking;
+@property(nonatomic) NSString *propString;
+@property(nonatomic, readonly) NSNumber *porpNoBacking;
+@property(nonatomic, strong) KVOTest *subTest;
 
 +(instancetype) runTest;
 

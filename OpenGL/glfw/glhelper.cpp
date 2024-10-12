@@ -9,6 +9,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <cassert>
 #include "glhelper.h"
 
 namespace gl {

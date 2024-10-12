@@ -9,11 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DeallocOrder : NSObject
-
-@property(nonatomic, copy) NSString *name;
-
-@property(nonatomic, strong) id obj;
+@interface DeallocOrderTest : NSObject
 
 + (void)test;
 

@@ -23,6 +23,37 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // testVerticalTextView(findViewById(R.id.vertical_text_view))
+
+    }
+
+    fun testVerticalTextView(view: VerticalTextView) {
+        // view.setShadowLayer(
+        //     10f,
+        //     5f,
+        //     5f,
+        //     Color.WHITE
+        // )
+        //
+        // view.paint.style = Paint.Style.STROKE
+        // view.paint.strokeWidth = 1.5f
+        // view.paint.color = Color.WHITE
+        // // view.paint.strokeCap = Paint.Cap.BUTT
+        // view.paint.strokeJoin = Paint.Join.MITER
+        // view.setTextColor(Color.BLACK)
+
+        val text = "你好世界Hello World你好😁世😂界"
+        val new = buildString {
+            text.forEach { char ->
+                append(char)
+                // new line
+                if (char.isLowSurrogate() || !char.isHighSurrogate()) {
+                    append('\n')
+                }
+            }
+        }
+        view.setText(new)
     }
 }
 

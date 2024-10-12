@@ -15,6 +15,7 @@ static void* contextIvarString = &contextIvarString;
 static void* contextPropInt = &contextPropInt;
 static void* contextPropString = &contextPropString;
 static void* contextPropNoBacking = &contextPropNoBacking;
+static void* contextSubTest_propString = &contextSubTest_propString;
 
 @interface KVObserver : NSObject
 
@@ -73,21 +74,45 @@ static void* contextPropNoBacking = &contextPropNoBacking;
     _propInt2 = propInt2;
 }
 
--(NSNumber*) porpNoBacking {
+- (NSNumber*) porpNoBacking {
     return @(self.propInt * 42);
+}
+
+- (void)dealloc {
+    NSLog(@"KVOTest dealloc");
+}
+
+- (void)addObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(void *)context {
+    [super addObserver:observer forKeyPath:keyPath options:options context:context];
+    
+    NSLog(@"KVOTest self:%@ addObserver:%@ forKeyPath:%@", self, observer, keyPath);
+}
+
+- (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath context:(void *)context {
+    [super removeObserver:observer forKeyPath:keyPath context:context];
+    NSLog(@"KVOTest self:%@ removeObserver:%@ forKeyPath:%@ context:%p", self, observer, keyPath, context);
+}
+
+- (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath {
+    [super removeObserver:observer forKeyPath:keyPath];
+    NSLog(@"KVOTest self:%@ removeObserver:%@ forKeyPath:%@", self, observer, keyPath);
 }
 
 + (instancetype)runTest {
     KVOTest* test = [[KVOTest alloc] init];
     KVObserver*ob = [[KVObserver alloc]init];
+    // keyPath, contexg
     NSDictionary<NSString*, NSValue*>* props = @{
         @"propInt": [NSValue valueWithPointer: contextPropInt],
         @"propString": [NSValue valueWithPointer: contextPropString],
         @"porpNoBacking": [NSValue valueWithPointer: contextPropNoBacking],
         @"ivarInt":[NSValue valueWithPointer: contextIvarInt],
         @"ivarString": [NSValue valueWithPointer: contextIvarString],
+        // subTest.propString
+        @"subTest.propString": [NSValue valueWithPointer: contextSubTest_propString],
     };
     
+    NSLog(@"KVOTest begin addObserver");
     for (NSString* prop in props) {
         [test addObserver:ob
                forKeyPath:prop
@@ -95,7 +120,9 @@ static void* contextPropNoBacking = &contextPropNoBacking;
                   context: [props[prop] pointerValue]
         ];
     }
-    
+    NSLog(@"KVOTest end addObserver");
+
+    NSLog(@"KVOTest begin changes");
     test.propInt = 42;
     test.propInt = 43;
     test.propInt2 = 43;
@@ -105,6 +132,13 @@ static void* contextPropNoBacking = &contextPropNoBacking;
     test->ivarInt = 11;
     test->ivarString = @"a";
     test->ivarString = @"b";
+    
+    NSLog(@"KVOTest assign subTest");
+    test.subTest = [[KVOTest alloc] init];
+    test.subTest.propString = @"subTest_string";
+
+    // test.subTest = nil;
+    NSLog(@"KVOTest end changes");
     
     for (NSString* prop in props) {
         [test removeObserver:ob forKeyPath: prop];

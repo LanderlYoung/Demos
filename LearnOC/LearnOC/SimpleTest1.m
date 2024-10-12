@@ -27,8 +27,9 @@
 
 @implementation MyClass
 
-- (void) instanceHello:(NSString*) name age:(NSInteger) age {
+- (void) instanceHello:(__kindof NSString*) name age:(NSInteger) age {
     NSLog(@"-MyClass hello %@ %ld", name, age);
+    NSMutableString *ms = name;
 }
 
 + (void) classHello:(NSString*) name age:(NSInteger) age {

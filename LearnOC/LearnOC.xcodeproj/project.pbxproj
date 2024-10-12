@@ -13,7 +13,7 @@
 		6F7C4B4626E72EF700C87E6B /* PropertyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F7C4B4526E72EF700C87E6B /* PropertyTest.m */; };
 		6F7C4B4926E73B9700C87E6B /* KVOTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F7C4B4826E73B9700C87E6B /* KVOTest.m */; };
 		6FB2B93C28BE2F4C0091A637 /* MethodSwizzling.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FB2B93B28BE2F4C0091A637 /* MethodSwizzling.m */; };
-		6FDE6BDE28F40635008429D3 /* DeallocOrder.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FDE6BDD28F40635008429D3 /* DeallocOrder.m */; };
+		6FDE6BDE28F40635008429D3 /* DeallocOrderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FDE6BDD28F40635008429D3 /* DeallocOrderTest.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -41,8 +41,8 @@
 		6F7C4B4826E73B9700C87E6B /* KVOTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KVOTest.m; sourceTree = "<group>"; };
 		6FB2B93A28BE2F4C0091A637 /* MethodSwizzling.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MethodSwizzling.h; sourceTree = "<group>"; };
 		6FB2B93B28BE2F4C0091A637 /* MethodSwizzling.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MethodSwizzling.m; sourceTree = "<group>"; };
-		6FDE6BDC28F40635008429D3 /* DeallocOrder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeallocOrder.h; sourceTree = "<group>"; };
-		6FDE6BDD28F40635008429D3 /* DeallocOrder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeallocOrder.m; sourceTree = "<group>"; };
+		6FDE6BDC28F40635008429D3 /* DeallocOrderTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeallocOrderTest.h; sourceTree = "<group>"; };
+		6FDE6BDD28F40635008429D3 /* DeallocOrderTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeallocOrderTest.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,8 +86,8 @@
 				6F7C4B4826E73B9700C87E6B /* KVOTest.m */,
 				6FB2B93A28BE2F4C0091A637 /* MethodSwizzling.h */,
 				6FB2B93B28BE2F4C0091A637 /* MethodSwizzling.m */,
-				6FDE6BDC28F40635008429D3 /* DeallocOrder.h */,
-				6FDE6BDD28F40635008429D3 /* DeallocOrder.m */,
+				6FDE6BDC28F40635008429D3 /* DeallocOrderTest.h */,
+				6FDE6BDD28F40635008429D3 /* DeallocOrderTest.m */,
 			);
 			path = LearnOC;
 			sourceTree = "<group>";
@@ -154,7 +154,7 @@
 				6F7C4B4926E73B9700C87E6B /* KVOTest.m in Sources */,
 				6FB2B93C28BE2F4C0091A637 /* MethodSwizzling.m in Sources */,
 				6F7C4B4326E72E4C00C87E6B /* SimpleTest1.m in Sources */,
-				6FDE6BDE28F40635008429D3 /* DeallocOrder.m in Sources */,
+				6FDE6BDE28F40635008429D3 /* DeallocOrderTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

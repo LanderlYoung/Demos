@@ -1,27 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".MainActivity">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
 
-    <io.github.landerlyoung.demo.AlphaGradientFrameLayout
-      android:layout_width="200dp"
-      android:layout_height="200dp"
-      android:background="@android:color/holo_blue_dark"
-      app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintLeft_toLeftOf="parent"
-      app:layout_constraintRight_toRightOf="parent"
-      app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
+    <ScrollView
+      android:id="@+id/outer"
+      android:layout_width="match_parent"
+      android:layout_height="400dp"
+      android:background="@color/colorAccent"
+      >
+
+        <androidx.appcompat.widget.LinearLayoutCompat
           android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:text="Hello"
-          android:gravity="center"
-          android:textSize="40sp" />
-    </io.github.landerlyoung.demo.AlphaGradientFrameLayout>
+          android:layout_height="wrap_content"
+          android:orientation="vertical">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+<!--            <TextView-->
+<!--              android:layout_width="wrap_content"-->
+<!--              android:layout_height="150dp"-->
+<!--              android:layout_gravity="center"-->
+<!--              android:gravity="center"-->
+<!--              android:textSize="40sp"-->
+<!--              android:text="OUTER"-->
+<!--              android:background="@android:color/holo_blue_bright"-->
+<!--              android:textColor="@android:color/white" />-->
+
+<!--            <ScrollView-->
+<!--              android:id="@+id/inner"-->
+<!--              android:layout_width="match_parent"-->
+<!--              android:layout_height="200dp"-->
+<!--              android:layout_marginLeft="16dp"-->
+<!--              android:layout_marginRight="16dp"-->
+<!--              android:background="@color/colorPrimary"-->
+<!--              android:nestedScrollingEnabled="true"-->
+<!--              >-->
+
+<!--                <androidx.appcompat.widget.LinearLayoutCompat-->
+<!--                  android:layout_width="match_parent"-->
+<!--                  android:layout_height="wrap_content"-->
+<!--                  android:orientation="vertical">-->
+
+<!--                    <TextView-->
+<!--                      android:layout_width="wrap_content"-->
+<!--                      android:layout_height="250dp"-->
+<!--                      android:layout_gravity="center"-->
+<!--                      android:textSize="40sp"-->
+<!--                      android:gravity="center"-->
+<!--                      android:text="INNER"-->
+<!--                      android:background="@android:color/holo_orange_light"-->
+<!--                      android:textColor="@android:color/white" />-->
+
+<!--                </androidx.appcompat.widget.LinearLayoutCompat>-->
+
+<!--            </ScrollView>-->
+
+<!--            <TextView-->
+<!--              android:layout_width="wrap_content"-->
+<!--              android:layout_height="150dp"-->
+<!--              android:layout_gravity="center"-->
+<!--              android:gravity="center"-->
+<!--              android:textSize="40sp"-->
+<!--              android:text="OUTER"-->
+<!--              android:background="@android:color/holo_blue_bright"-->
+              android:textColor="@android:color/white" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </ScrollView>
+
+
+</FrameLayout>
