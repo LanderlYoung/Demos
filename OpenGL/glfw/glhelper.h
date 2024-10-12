@@ -52,7 +52,7 @@ public:
     }
 
     static Shader<VertexOrFragment> &&fromFile(const std::string &filePath) {
-        return std::move(Shader<VertexOrFragment>(readFile(filePath)));
+        return Shader<VertexOrFragment>(readFile(filePath));
     }
 
     bool success() const { return program != 0; }
@@ -111,6 +111,7 @@ private:
 
     void compileProgram(const std::string_view &vertexShader,
                         const std::string_view &fragmentShader);
+
 public:
     ShaderProgram(const std::string_view &vertexShader,
                   const std::string_view &fragmentShader)
@@ -126,7 +127,8 @@ public:
         }
     }
 
-    ShaderProgram(ShaderProgram &&from) noexcept : program(from.program), compileLog(from.compileLog) {
+    ShaderProgram(ShaderProgram&& from) noexcept : program(from.program),
+                                                   compileLog(from.compileLog) {
         from.program = 0;
         from.compileLog = "(deleted)";
     }
@@ -204,8 +206,7 @@ private:
         GLuint &i;
     public:
 
-        __Usable(GLuint &i) : i(i) {
-        }
+        __Usable(GLuint& i) : i(i) {}
 
     protected:
         void use() override {

@@ -1,10 +1,6 @@
 #include <iostream>
 
 // GLEW
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#define GLEW_STATIC
-
 #include <GL/glew.h>
 
 // GLFW
@@ -106,7 +102,7 @@ int main() {
 
 // Is called whenever a key is pressed/released via GLFW
 void key_callback(GLFWwindow *window, int key, __unused int scancode, int action, __unused int mode) {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    if ((key == GLFW_KEY_ESCAPE || key == GLFW_KEY_Q) && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
 
     auto ptr = static_cast<Renderer *>(glfwGetWindowUserPointer(window));
@@ -197,6 +193,3 @@ void APIENTRY glDebugOutput(GLenum source,
     std::cerr << std::endl;
     std::cerr << std::endl;
 }
-
-
-#pragma clang diagnostic pop
