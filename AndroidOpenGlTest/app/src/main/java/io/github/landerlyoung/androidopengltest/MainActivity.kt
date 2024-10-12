@@ -12,6 +12,11 @@ class MainActivity : AppCompatActivity() {
 
         // Example of a call to a native method
         sample_text.text = stringFromJNI()
+        my_gl_surface_view.renderer = {
+//            GLES20.glClearColor(1f, 0f,0f,1f)
+//            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+            render()
+        }
     }
 
     /**
@@ -19,6 +24,8 @@ class MainActivity : AppCompatActivity() {
      * which is packaged with this application.
      */
     external fun stringFromJNI(): String
+
+    external fun render()
 
     companion object {
         // Used to load the 'native-lib' library on application startup.
