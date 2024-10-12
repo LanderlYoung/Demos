@@ -5,6 +5,8 @@
   > Created Time:  Tue 06 Oct 2015 01:28:30 AM CST
  ************************************************************************/
 
+import java.util.*;
+
 public class JavaDemo {
     public static int binSearch(int key, int[] arr) {
         int left = 0, right = arr.length - 1, mid;
@@ -20,6 +22,25 @@ public class JavaDemo {
         return -1;
     }
 
+    public static void insertSort(int[] arr) {
+        for (int i = 1; i <= arr.length; i++) {
+            insert(arr[i-1], arr,  i);
+        }
+    }
+
+    public static void insert(int num, int [] arr, int right) {
+        for (int i = 0; i < right; i++) {
+            if (arr[i] > num) {
+                for (int j = right - 1; j > i; j--) {
+                    arr[j] = arr[j - 1];
+                }
+                arr[i] = num;
+                break;
+            }
+        }
+
+    }
+
     public static void main(String[] args) {
         final int ARR_LEN = 128;
         int[] ordArr = new int[ARR_LEN];
@@ -29,5 +50,13 @@ public class JavaDemo {
         System.out.println(binSearch(-1, ordArr));
         System.out.println(binSearch(100, ordArr));
         System.out.println(binSearch(256, ordArr));
+
+        System.out.println("====");
+        Random r = new Random();
+        for (int i = 0; i < ARR_LEN; i++) ordArr[i] = r.nextInt(100);
+        System.out.println(Arrays.toString(ordArr));
+        insertSort(ordArr);
+        System.out.println(Arrays.toString(ordArr));
+
     }
 }
