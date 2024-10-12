@@ -28,6 +28,8 @@ Renderer *makeTriangleRenderer();
 
 Renderer *makeMyTriangleRenderer();
 
-Renderer *makeLessonShaderRenderer();
+Renderer *makeLesson2ShaderRenderer();
 
-constexpr auto makeRenderer = makeLessonShaderRenderer;
+Renderer *makeLesson3TextureRenderer();
+
+constexpr auto makeRenderer = makeLesson3TextureRenderer;

@@ -157,6 +157,6 @@ public:
 
 };
 
-Renderer *makeLessonShaderRenderer() {
+Renderer *makeLesson2ShaderRenderer() {
     return new LessonShaderRenderer();
 }
