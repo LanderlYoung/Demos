@@ -105,9 +105,10 @@ fastFibo n = snd $ fiboPair n
 golden :: Fractional a => Int -> [a]
 golden n = take n (map (\(x, y) -> x/y) (iterate fiboStep (0, 1)))
 
+--binary search
 binSearch :: Ord a => a -> [a] -> Bool
 binSearch a [] = False
 binSearch a xs | m < a = search a behid
-            | m > a = search a front
-            | otherwise = True
-              where (front, m:behid) = splitAt (length xs `div` 2) xs
+               | m > a = search a front
+               | otherwise = True
+                 where (front, m:behid) = splitAt (length xs `div` 2) xs
