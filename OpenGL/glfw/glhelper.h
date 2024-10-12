@@ -13,13 +13,26 @@
 #include <string>
 #include <string_view>
 #include <vector>
+
+#ifndef NDEBUG
+
+#include <thread>
+
+#endif
+
 #include <GL/glew.h>
+#include <iostream>
 
 #include "utils.h"
 
 namespace gl {
 
 std::string readFile(const std::string_view &filePath);
+
+// use GL_LOG
+GLenum __glCheckError(const char *func, int line);
+
+#define glCheckError() gl::__glCheckError(__func__, __LINE__)
 
 template<bool VertexOrFragment>
 class Shader {
@@ -54,15 +67,21 @@ public:
 class Scope {
 public:
     class Usable {
-    public:
+    protected:
         virtual void use() = 0;
 
         virtual void unuse() = 0;
+
+        friend class Scope;
     };
 
 private:
     static thread_local std::vector<Scope::Usable *> _usableStack;
     Usable *usable;
+#ifndef NDEBUG
+    // check for scope being used on wrong thread
+    std::thread::id _thread_id;
+#endif
 
     explicit Scope(Usable *usable) noexcept;
 
@@ -74,7 +93,7 @@ public:
 
     explicit Scope(Usable &usable) noexcept: Scope(&usable) {}
 
-    Scope(Scope &&from) noexcept : usable(from.usable) { from.usable = nullptr; }
+    Scope(Scope &&from) noexcept;
 
     ~Scope();
 };
@@ -127,31 +146,35 @@ public:
         return glGetUniformLocation(program, uniformName.data());
     }
 
+protected:
     void use() override { glUseProgram(program); }
 
     void unuse() override { glUseProgram(0); }
 
 };
 
-template<typename Extra>
+struct NoExtra {
+};
+
+template<typename Extra = NoExtra>
 class ShaderProgramExtra : public ShaderProgram {
 public:
-    Extra location;
+    Extra extra;
 
     ShaderProgramExtra(
             const std::string_view &vertexShader,
             const std::string_view &fragmentShader) :
             ShaderProgram(vertexShader, fragmentShader),
-            location() {}
+            extra() {}
 
     ShaderProgramExtra(
             const std::string_view &vertexShader,
             const std::string_view &fragmentShader,
             const std::function<void(const ShaderProgram &, Extra &)> &uniformInit) :
             ShaderProgram(vertexShader, fragmentShader),
-            location() {
+            extra() {
         if (success()) {
-            uniformInit(static_cast<ShaderProgram&>(*this), location);
+            uniformInit(static_cast<ShaderProgram &>(*this), extra);
         }
     }
 
@@ -161,12 +184,17 @@ public:
 
     ShaderProgramExtra(ShaderProgramExtra &&move) :
             ShaderProgram(move) {
-        location = std::move(move.location);
+        extra = std::move(move.extra);
     }
 };
 
 
-template<typename Extra, bool useIndex>
+/**
+ * A Shader Wrapper together with VertexArrayObject, VertexBufferObject, ElementBufferObject(optional).
+ * @tparam useIndex  enable or not ElementBufferObject
+ * @tparam Extra     extra data type (usually used to store uniform location in shader).
+ */
+template<bool useIndex = true, typename Extra = NoExtra>
 class ShaderMachine : public ShaderProgramExtra<Extra> {
 
 private:
@@ -177,10 +205,12 @@ private:
     template<int UsableType>
     class __Usable : public Scope::Usable {
         GLuint &i;
+    public:
 
         __Usable(GLuint &i) : i(i) {
         }
 
+    protected:
         void use() override {
             switch (UsableType) {
                 case 1:
@@ -210,14 +240,11 @@ private:
         }
     };
 
-    __Usable<0> vertexArrayObjectUsable;
-    __Usable<1> vertexBufferObjectUsable;
-    __Usable<2> elementBufferObjectUsable;
+    __Usable<1> vertexArrayObjectUsable;
+    __Usable<2> vertexBufferObjectUsable;
+    __Usable<3> elementBufferObjectUsable;
 
-    ShaderMachine() :
-            vertexArrayObjectUsable(vertexArrayObject),
-            vertexBufferObjectUsable(vertexBufferObjectUsable),
-            elementBufferObjectUsable(elementBufferObject) {
+    void initObjects() {
         glGenVertexArrays(1, &vertexArrayObject);
         glGenBuffers(1, &vertexBufferObject);
         if (useIndex) {
@@ -231,7 +258,10 @@ public:
             const std::string_view &vertexShader,
             const std::string_view &fragmentShader) :
             ShaderProgramExtra<Extra>(vertexShader, fragmentShader),
-            ShaderMachine() {
+            vertexArrayObjectUsable(vertexArrayObject),
+            vertexBufferObjectUsable(vertexBufferObject),
+            elementBufferObjectUsable(elementBufferObject) {
+        initObjects();
     }
 
     ShaderMachine(
@@ -239,7 +269,10 @@ public:
             const std::string_view &fragmentShader,
             const std::function<void(const ShaderProgram &, Extra &)> &uniformInit) :
             ShaderProgramExtra<Extra>(vertexShader, fragmentShader, uniformInit),
-            ShaderMachine() {
+            vertexArrayObjectUsable(vertexArrayObject),
+            vertexBufferObjectUsable(vertexBufferObject),
+            elementBufferObjectUsable(elementBufferObject) {
+        initObjects();
     }
 
     ShaderMachine(ShaderMachine &&move) noexcept :
@@ -248,7 +281,7 @@ public:
             vertexBufferObject(move.vertexBufferObject),
             elementBufferObject(move.elementBufferObject),
             vertexArrayObjectUsable(vertexArrayObject),
-            vertexBufferObjectUsable(vertexBufferObjectUsable),
+            vertexBufferObjectUsable(vertexBufferObject),
             elementBufferObjectUsable(elementBufferObject) {
         move.vertexArrayObject = 0;
         move.vertexBufferObject = 0;
@@ -263,22 +296,25 @@ public:
 
     DISALLOW_COPY_ASSIGN(ShaderMachine);
 
-    Scope &&useVertexArrayObject() { return std::move(gl::Scope(vertexArrayObjectUsable)); }
+    Scope useVertexArrayObject() { return Scope(vertexArrayObjectUsable); }
 
-    Scope &&useVertexBufferObject() { return std::move(gl::Scope(vertexBufferObjectUsable)); }
+    Scope useVertexBufferObject() { return Scope(vertexBufferObjectUsable); }
 
-    Scope &&useElementBufferObject() { return std::move(gl::Scope(elementBufferObjectUsable)); }
+    Scope useElementBufferObject() { return Scope(elementBufferObjectUsable); }
 
+protected:
     void use() override {
-        vertexArrayObjectUsable.use();
-        vertexBufferObjectUsable.use();
-        elementBufferObjectUsable.use();
+        ShaderProgramExtra<Extra>::use();
+        glBindVertexArray(vertexArrayObject);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
+        if (useIndex) glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
     }
 
     void unuse() override {
-        vertexArrayObjectUsable.unuse();
-        vertexBufferObjectUsable.unuse();
-        elementBufferObjectUsable.unuse();
+        ShaderProgramExtra<Extra>::unuse();
+        glBindVertexArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        if (useIndex) glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 };
 

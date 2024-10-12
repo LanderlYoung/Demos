@@ -41,9 +41,7 @@ void main() {
 
 class ShaderRenderer : public Renderer {
 private:
-    gl::ShaderProgramExtra<GLuint> shaderProgram;
-    GLuint VBO_Position = 0;
-    GLuint VAO = 0;
+    gl::ShaderMachine<false, GLuint> shaderMachine;
 //    GLfloat vertices[18]{
 //            // 位置              // 颜色
 //            0.5f, -0.5f, 0.0f,  /**/ 1.0f, 0.0f, 0.0f,   // 右下
@@ -59,23 +57,20 @@ private:
     };
 public:
     ShaderRenderer() :
-            shaderProgram(
+            shaderMachine(
                     vertexShader,
                     fragmentShader,
                     [](auto &p, auto &u) { u = p.getUniformLocation("xTrans"); }) {
-        if (!shaderProgram.success()) {
-            std::cerr << "compile shader failed " << shaderProgram.getCompileLog() << std::endl;
+        if (!shaderMachine.success()) {
+            std::cerr << "compile shader failed " << shaderMachine.getCompileLog() << std::endl;
             return;
         }
 
-        glGenVertexArrays(1, &VAO);
-
-        glBindVertexArray(VAO);
+        auto vaoScope = shaderMachine.useVertexArrayObject();
         // operations on the VAO
         {
             {
-                glGenBuffers(1, &VBO_Position);
-                glBindBuffer(GL_ARRAY_BUFFER, VBO_Position);
+                auto vboScope = shaderMachine.useVertexBufferObject();
                 // Set up vertex data (and buffer(s)) and attribute pointers
                 glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
@@ -112,49 +107,17 @@ public:
                 );
                 glEnableVertexAttribArray(1);
             }
-
-
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-            // release bound VBO
-
-            // release bound VAO
-            glBindVertexArray(0);
         }
     }
 
-    ~ShaderRenderer() override {
-        glDeleteVertexArrays(1, &VAO);
-        glDeleteBuffers(1, &VBO_Position);
-    }
-
-    void step() {
-        if (vertices[0] > 1.0f) {
-            vertices[0] = -1.0f;
-            vertices[1] = -1.0f;
-
-            vertices[3] = 0.0f;
-            vertices[4] = -1.0f;
-
-            vertices[6] = -0.5f;
-            vertices[7] = -0.0f;
-        } else {
-            for (auto i = 0; i < 3; i++) {
-                auto stepLen = 0.0005f;
-                vertices[i * 3] += stepLen;
-                vertices[i * 3 + 1] += stepLen;
-            }
-        }
-    }
+    ~ShaderRenderer() override = default;
 
     void render() override {
-        gl::Scope p(shaderProgram);
+        gl::Scope p(shaderMachine);
 
-        glUniform1f(shaderProgram.location, 0.4f);
-        glBindVertexArray(VAO);
+        glUniform1f(shaderMachine.extra, 0.4f);
 
         glDrawArrays(GL_TRIANGLES, 0, 3);
-        // release bound array
-        glBindVertexArray(0);
     }
 
 };

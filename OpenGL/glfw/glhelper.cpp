@@ -8,9 +8,42 @@
 */
 
 #include <fstream>
+#include <sstream>
 #include "glhelper.h"
 
 namespace gl {
+
+std::string readFile(const std::string &filePath) {
+    std::ifstream file(filePath, std::ios::binary);
+    return std::string{std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()};
+}
+
+GLenum __glCheckError(const char *func, int line)
+{
+    GLenum errorCode;
+    while ((errorCode = glGetError()) != GL_NO_ERROR)
+    {
+        std::ostringstream error;
+        switch (errorCode)
+        {
+            case GL_INVALID_ENUM:                  error << "INVALID_ENUM"; break;
+            case GL_INVALID_VALUE:                 error << "INVALID_VALUE"; break;
+            case GL_INVALID_OPERATION:             error << "INVALID_OPERATION"; break;
+            case GL_STACK_OVERFLOW:                error << "STACK_OVERFLOW"; break;
+            case GL_STACK_UNDERFLOW:               error << "STACK_UNDERFLOW"; break;
+            case GL_OUT_OF_MEMORY:                 error << "OUT_OF_MEMORY"; break;
+            case GL_INVALID_FRAMEBUFFER_OPERATION: error << "INVALID_FRAMEBUFFER_OPERATION"; break;
+            default:                               error << "UNKNOWN_ERROR"; break;
+        }
+        error << " | " << func << " (" << line << ")";
+#ifdef GL_LOG
+        GL_LOG(error.str().c_str());
+#else
+        std::cerr << error.str() << std::endl;
+#endif
+    }
+    return errorCode;
+}
 
 static void compileShader(
         bool vertexOrFragment,
@@ -59,11 +92,6 @@ Shader<false>::Shader(const std::string_view &shaderSource) : compileLog() {
     compileShader(false, shaderSource, program, compileLog);
 }
 
-std::string readFile(const std::string &filePath) {
-    std::ifstream file(filePath, std::ios::binary);
-    return std::string{std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()};
-}
-
 void ShaderProgram::compileProgram(
         const std::string_view &vertexShader,
         const std::string_view &fragmentShader) {
@@ -98,14 +126,33 @@ void ShaderProgram::compileProgram(
 
 thread_local std::vector<Scope::Usable *> Scope::_usableStack;
 
-Scope::Scope(Usable *usable) noexcept : usable(usable) {
+Scope::Scope(Usable *usable) noexcept :
+        usable(usable)
+#ifndef NDEBUG
+        , _thread_id(std::this_thread::get_id())
+#endif
+{
+
     assert(usable != nullptr);
     _usableStack.push_back(usable);
     usable->use();
 }
 
+Scope::Scope(Scope &&from) noexcept :
+        usable(from.usable)
+#ifndef NDEBUG
+        , _thread_id(from._thread_id)
+#endif
+{
+    from.usable = nullptr;
+}
+
 Scope::~Scope() {
-    if (usable) {
+#ifndef NDEBUG
+    assert(_thread_id == std::this_thread::get_id());
+#endif
+
+    if (usable != nullptr) {
         // assert legit stack status
         assert(!_usableStack.empty());
         assert(_usableStack.at(_usableStack.size() - 1) == usable);
@@ -119,6 +166,8 @@ Scope::~Scope() {
             auto previous = _usableStack.at(_usableStack.size() - 1);
             previous->use();
         }
+    } else {
+        // instance is destroyed by move constructor
     }
 }
 
