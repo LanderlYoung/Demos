@@ -9,10 +9,10 @@ add_executable(glfw_app
         glhelper.h
         glhelper.cpp
         glfw_main.cpp
-        TriangleRenderer.cpp
-        MyTriangleRender.cpp
-        Leson2Shader.cpp
-        lesson3Texture.cpp
+        Lesson1_Triangle.cpp
+        Lesson1.1_Rectangle.cpp
+        Lesson2_Shader.cpp
+        lesson3_Texture.cpp
 
         ../ext/lodepng/lodepng.h
         ../ext/lodepng/lodepng.cpp

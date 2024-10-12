@@ -34,18 +34,25 @@ void main() {
 
 )";
 
-class Lession2ShaderRenderer : public Renderer {
+class RectangleRenderer : public Renderer {
 private:
     gl::ShaderProgram shaderProgram;
-    GLuint VBO = 0;
     GLuint VAO = 0;
-    GLfloat vertices[9] = {
-            -0.5f, -0.5f, 0.0f, // Left
-            0.5f, -0.5f, 0.0f,  // Right
-            0.0f, 0.5f, 0.0f    // Top
+    GLuint VBO = 0;
+    GLuint EBO = 0;
+    GLfloat vertices[12] = {
+            0.5f, 0.5f, 0.0f,   // 右上角
+            0.5f, -0.5f, 0.0f,  // 右下角
+            -0.5f, -0.5f, 0.0f, // 左下角
+            -0.5f, 0.5f, 0.0f   // 左上角
+    };
+
+    GLuint indices[6] = { // 注意索引从0开始!
+            0, 1, 3, // 第一个三角形
+            1, 2, 3  // 第二个三角形
     };
 public:
-    Lession2ShaderRenderer() : shaderProgram(vertexShader, fragmentShader) {
+    RectangleRenderer() : shaderProgram(vertexShader, fragmentShader) {
         if (!shaderProgram.success()) {
             std::cerr << "compile shader failed " << shaderProgram.getCompileLog() << std::endl;
             return;
@@ -59,7 +66,11 @@ public:
             glGenBuffers(1, &VBO);
             glBindBuffer(GL_ARRAY_BUFFER, VBO);
             // Set up vertex data (and buffer(s)) and attribute pointers
-            glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+            glGenBuffers(1, &EBO);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
             //https://learnopengl-cn.readthedocs.io/zh/latest/01%20Getting%20started/04%20Hello%20Triangle/
             glVertexAttribPointer(
@@ -86,45 +97,23 @@ public:
         }
     }
 
-    ~Lession2ShaderRenderer() override {
+    ~RectangleRenderer() override {
         glDeleteVertexArrays(1, &VAO);
         glDeleteBuffers(1, &VBO);
-    }
-
-    void step() {
-        if (vertices[0] > 1.0f) {
-            vertices[0] = -1.0f;
-            vertices[1] = -1.0f;
-
-            vertices[3] = 0.0f;
-            vertices[4] = -1.0f;
-
-            vertices[6] = -0.5f;
-            vertices[7] = -0.0f;
-        } else {
-            for (auto i = 0; i < 3; i++) {
-                auto stepLen = 0.0005f;
-                vertices[i * 3] += stepLen;
-                vertices[i * 3 + 1] += stepLen;
-            }
-        }
     }
 
     void render() override {
         auto scope = shaderProgram.use();
         glBindVertexArray(VAO);
 
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        step();
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
-
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
         // release bound array
         glBindVertexArray(0);
     }
 
 };
 
-Renderer *makeMyTriangleRenderer() {
-    return new Lession2ShaderRenderer();
+Renderer *makeRectangleRenderer() {
+    return new RectangleRenderer();
 }

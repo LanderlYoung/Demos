@@ -26,10 +26,10 @@ public:
 
 Renderer *makeTriangleRenderer();
 
-Renderer *makeMyTriangleRenderer();
+Renderer *makeRectangleRenderer();
 
-Renderer *makeLesson2ShaderRenderer();
+Renderer *makeShaderRenderer();
 
-Renderer *makeLesson3TextureRenderer();
+Renderer *makeTextureRenderer();
 
-constexpr auto makeRenderer = makeLesson2ShaderRenderer;
+constexpr auto makeRenderer = makeRectangleRenderer;

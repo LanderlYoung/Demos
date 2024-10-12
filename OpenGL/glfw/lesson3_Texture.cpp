@@ -8,6 +8,6 @@
 */
 #include "index.h"
 
-Renderer *makeLesson3TextureRenderer() {
+Renderer *makeTextureRenderer() {
 
 }

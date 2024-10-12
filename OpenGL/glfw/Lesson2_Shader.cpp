@@ -39,7 +39,7 @@ void main() {
 
 )";
 
-class LessonShaderRenderer : public Renderer {
+class ShaderRenderer : public Renderer {
 private:
     gl::ShaderProgramExtra<GLuint> shaderProgram;
     GLuint VBO_Position = 0;
@@ -58,7 +58,7 @@ private:
             0.5f, 0.5f, 0.0f,   /**/ 0.0f, 0.0f, 1.0f    // 顶部
     };
 public:
-    LessonShaderRenderer() :
+    ShaderRenderer() :
             shaderProgram(
                     vertexShader,
                     fragmentShader,
@@ -122,7 +122,7 @@ public:
         }
     }
 
-    ~LessonShaderRenderer() override {
+    ~ShaderRenderer() override {
         glDeleteVertexArrays(1, &VAO);
         glDeleteBuffers(1, &VBO_Position);
     }
@@ -159,6 +159,6 @@ public:
 
 };
 
-Renderer *makeLesson2ShaderRenderer() {
-    return new LessonShaderRenderer();
+Renderer *makeShaderRenderer() {
+    return new ShaderRenderer();
 }
