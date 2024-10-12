@@ -119,7 +119,7 @@ _binSearch left right key xs
 mySearch :: Ord a => a -> [a] -> Int
 mySearch key xs = _binSearch 0 (length xs) key xs
 
---binary search
+------------binary search---------------
 binSearch :: Ord a => a -> [a] -> Bool
 binSearch a [] = False
 binSearch a xs | m < a = binSearch a behid
@@ -127,7 +127,7 @@ binSearch a xs | m < a = binSearch a behid
                | otherwise = True
                  where (front, m:behid) = splitAt (length xs `div` 2) xs
 
-
+----------insert sort------------------
 insert :: Ord a => a -> [a] -> [a]
 insert a [] = [a]
 insert a (x:xs) | a < x = a:x:xs
@@ -139,18 +139,45 @@ insertSort [] = []
 insertSort (x:xs) = insert x (insertSort xs)
 
 
-{-- dump one-}
+{-- dumb one-}
 _myInsertSort :: Ord a => {--store--} [a] {--input--} -> [a] -> [a]
 _myInsertSort store [] = store
 _myInsertSort store (x:xs) = _myInsertSort (insert x store) xs
 
+{--add explict function type here to avoid monomorphism issue--}
 myInsertSort :: Ord a => [a] -> [a]
 myInsertSort = _myInsertSort []
 {-- end dump one-}
 
+------------bubble sort (fixed point)------------
+{--myBubbleSort the dumb way--}
 
+--Crap!! I cannot evencome up with the dumb way
 
+{--end the dumb way--}
 
+swaps :: Ord a => [a] -> [a]
+swaps [] = []
+swaps [x] = [x]
+swaps (x1:x2:xs) | x1 > x2 = x2 : swaps (x1:xs)
+                 | otherwise = x1 : swaps (x2:xs)
+
+fix :: Eq a => (a->a) -> a -> a
+fix f x = if x == x' then x else fix f x'
+             where x' = f x
+
+bubbleSort :: Ord a => [a] -> [a]
+bubbleSort xs = fix swaps xs
+
+--my
+bubbleSort' :: Ord a => [a] -> [a]
+bubbleSort' xs = if xs == xs' then xs else bubbleSort' xs'
+                     where xs' = swaps xs
+
+--in the book
+bubbleSort'' :: Ord a => [a] -> [a]
+bubbleSort' xs | swaps xs == xs = xs
+               | otherwise bubbleSort' $ swaps xs
 
 
 
