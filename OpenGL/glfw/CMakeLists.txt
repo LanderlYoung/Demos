@@ -10,14 +10,18 @@ add_executable(glfw_app
         utils.h
         glhelper.h
         glhelper.cpp
+
         glfw_main.cpp
-        Lesson1_Triangle.cpp
-        Lesson1.1_Rectangle.cpp
-        Lesson2_Shader.cpp
-        lesson3_Texture.cpp
 
         ../ext/lodepng/lodepng.h
         ../ext/lodepng/lodepng.cpp
+
+        Lesson1_Triangle.cpp
+        Lesson1.1_Rectangle.cpp
+        Lesson2_Shader.cpp
+        Lesson3_Texture.cpp
+        Lesson4_Transformations.cpp
+
         )
 target_include_directories(glfw_app PUBLIC
         ${GLEW_INCLUDE_DIRS}

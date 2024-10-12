@@ -1,11 +1,16 @@
 /**
 * <pre>
 * Author: taylorcyang@tencent.com
-* Date:   2019-08-12
-* Time:   14:15
+* Date:   2019-08-14
+* Time:   16:29
 * Life with Passion, Code with Creativity.
 * </pre>
 */
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <string_view>
 #include <iostream>
 #include "index.h"
@@ -22,8 +27,10 @@ layout (location=2) in vec2 texCoord;
 out vec3 ourColor;
 out vec2 TexCoord;
 
+uniform mat4 transform;
+
 void main() {
-    gl_Position = vec4(position, 1.0f);
+    gl_Position = transform * vec4(position, 1.0f);
     ourColor = color;
     TexCoord = texCoord;
 }
@@ -57,12 +64,13 @@ void main() {
 
 )";
 
-class TextureRenderer : public Renderer {
+class TransformationsRenderer : public Renderer {
 private:
     struct UniformLocation {
         GLuint texture1;
         GLuint texture2;
         GLuint mixValue;
+        GLuint transform;
     };
 
     float mixValue = 0.2;
@@ -90,10 +98,11 @@ private:
     }
 
 public:
-    TextureRenderer() : shaderMachine(vertexShader, fragmentShader, [](auto &p, auto &u) {
+    TransformationsRenderer() : shaderMachine(vertexShader, fragmentShader, [](auto &p, auto &u) {
         u.texture1 = p.getUniformLocation("ourTexture1");
         u.texture2 = p.getUniformLocation("ourTexture2");
         u.mixValue = p.getUniformLocation("mixValue");
+        u.transform = p.getUniformLocation("transform");
     }) {
         if (!shaderMachine.success()) {
             std::cerr << "compile shader failed " << shaderMachine.getCompileLog() << std::endl;
@@ -221,7 +230,7 @@ public:
         }
     }
 
-    ~TextureRenderer() override {
+    ~TransformationsRenderer() override {
         glDeleteTextures(1, &texture1);
     }
 
@@ -251,8 +260,18 @@ public:
 
         glUniform1i(shaderMachine.extra.texture1, 0);
         glUniform1i(shaderMachine.extra.texture2, 1);
-
         glUniform1f(shaderMachine.extra.mixValue, mixValue);
+
+        auto transform = glm::identity<glm::mat4>();
+        transform = glm::translate(transform, glm::vec3(0.5, -0.5, 0.0));
+        auto time = std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::system_clock::now().time_since_epoch()).count() % 10000;
+        transform = glm::rotate(
+                transform,
+                 time * 0.002f,
+                glm::vec3(0.0f, 0.0f, 1.0f));
+
+        glUniformMatrix4fv(shaderMachine.extra.transform, 1, GL_FALSE, glm::value_ptr(transform));
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
         glCheckError();
@@ -262,8 +281,7 @@ public:
 
 };
 
-
-Renderer *makeTextureRenderer() {
-    return new TextureRenderer();
+Renderer *makeTransformationsRenderer() {
+    return new TransformationsRenderer();
 }
 
