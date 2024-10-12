@@ -74,21 +74,52 @@ private:
 
     float mixValue = 0.2;
 
-    gl::ShaderMachine<true, UniformLocation> shaderMachine;
+    gl::ShaderMachine<false, UniformLocation> shaderMachine;
     GLuint texture1 = 0;
     GLuint texture2 = 0;
-    GLfloat vertices[32]{
-            // Positions          // Texture Coords
-            0.5f,  0.5f, 0.0f,   1.0f, 1.0f, // Top Right
-            0.5f, -0.5f, 0.0f,   1.0f, 0.0f, // Bottom Right
-            -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, // Bottom Left
-            -0.5f,  0.5f, 0.0f,   0.0f, 1.0f  // Top Left
-    };
+    GLfloat vertices[180]{
+            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+            0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
+            0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+            0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+            -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
 
-    GLuint indices[6]{ // 注意索引从0开始!
-            0, 1, 3, // 第一个三角形
-            1, 2, 3  // 第二个三角形
-    };
+            -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+            0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+            0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+            0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+            -0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
+            -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+
+            -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+            -0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+            -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+            -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+
+            0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+            0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+            0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+            0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+            0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+            0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+
+            -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+            0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
+            0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+            0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+            -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+
+            -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
+            0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+            0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+            0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+            -0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
+            -0.5f, 0.5f, -0.5f, 0.0f, 1.0f
+    };;
 
     static unsigned loadImage(const std::string &name, std::vector<unsigned char> &image, unsigned &width, unsigned &height) {
         std::string base = __FILE__;
@@ -142,12 +173,6 @@ public:
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *) (3 * sizeof(GLfloat)));
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(2);
-
-        {
-            // create index for VBO
-            auto eboScope = shaderMachine.useElementBufferObject();
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-        }
     }
 
     void prepareTexture() {
@@ -265,13 +290,17 @@ public:
 
         glm::mat4 view = glm::translate(glm::identity<glm::mat4>(), glm::vec3(0.0f, 0.0f, -3.0f));
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), width / height, 0.1f, 100.0f);
-        glm::mat4 model = glm::rotate(glm::identity<glm::mat4>(),glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        glm::mat4 model = glm::rotate(
+                glm::identity<glm::mat4>(),
+                (std::chrono::duration_cast<std::chrono::milliseconds>(
+                        std::chrono::system_clock::now().time_since_epoch()).count() % 10000) * 0.001f,
+                glm::vec3(1.0f, 0.0f, 0.0f));
 
         glUniformMatrix4fv(shaderMachine.extra.model, 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(shaderMachine.extra.view, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(shaderMachine.extra.projection, 1, GL_FALSE, glm::value_ptr(projection));
 
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
         glCheckError();
 
         glBindVertexArray(0);
