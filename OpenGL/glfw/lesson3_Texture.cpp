@@ -41,6 +41,8 @@ out vec4 color;
 uniform sampler2D ourTexture1;
 uniform sampler2D ourTexture2;
 
+uniform float mixValue;
+
 void main() {
     // color = texture(ourTexture, TexCoord);
 
@@ -49,7 +51,8 @@ void main() {
 
     // blend texture
     // 1-0.2 first + 0.2 second
-    color = mix(texture(ourTexture1, inv), texture(ourTexture2, inv), 0.2);
+    // color = mix(texture(ourTexture1, inv), texture(ourTexture2, inv), 0.2);
+    color = mix(texture(ourTexture1, inv), texture(ourTexture2, inv), mixValue);
 }
 
 )";
@@ -59,7 +62,11 @@ private:
     struct UniformLocation {
         GLuint texture1;
         GLuint texture2;
+        GLuint mixValue;
     };
+
+    float mixValue = 0.2;
+
     gl::ShaderMachine<true, UniformLocation> shaderMachine;
     GLuint texture1 = 0;
     GLuint texture2 = 0;
@@ -86,6 +93,7 @@ public:
     TextureRenderer() : shaderMachine(vertexShader, fragmentShader, [](auto &p, auto &u) {
         u.texture1 = p.getUniformLocation("ourTexture1");
         u.texture2 = p.getUniformLocation("ourTexture2");
+        u.mixValue = p.getUniformLocation("mixValue");
     }) {
         if (!shaderMachine.success()) {
             std::cerr << "compile shader failed " << shaderMachine.getCompileLog() << std::endl;
@@ -217,6 +225,16 @@ public:
         glDeleteTextures(1, &texture1);
     }
 
+    void handleKeyEvent(int key, int action) override {
+        if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
+            mixValue += 0.1f;
+            mixValue = std::min(mixValue, 1.0f);
+        } else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
+            mixValue -= 0.1f;
+            mixValue = std::max(mixValue, 0.0f);
+        }
+    }
+
     void render() override {
         if (!shaderMachine.success()) return;
 
@@ -232,6 +250,8 @@ public:
 
         glUniform1i(shaderMachine.extra.texture1, 0);
         glUniform1i(shaderMachine.extra.texture2, 1);
+
+        glUniform1f(shaderMachine.extra.mixValue, mixValue);
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
         glCheckError();

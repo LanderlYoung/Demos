@@ -57,6 +57,8 @@ int main()
     glViewport(0, 0, width, height);
 
     auto renderer = std::unique_ptr<Renderer>(makeRenderer());
+    glfwSetWindowUserPointer(window, renderer.get());
+
     // Game loop
     while (!glfwWindowShouldClose(window)) {
         // Check if any events have been activated (key pressed, mouse moved etc.)
@@ -74,6 +76,7 @@ int main()
         glfwSwapBuffers(window);
     }
 
+    glfwSetWindowUserPointer(window, nullptr);
     // Terminate GLFW, clearing any resources allocated by GLFW.
     glfwTerminate();
     return 0;
@@ -84,6 +87,11 @@ void key_callback(GLFWwindow *window, int key, __unused int scancode, int action
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
+
+    auto ptr = static_cast<Renderer *>(glfwGetWindowUserPointer(window));
+    if (ptr) {
+        ptr->handleKeyEvent(key, action);
+    }
 }
 
 #pragma clang diagnostic pop

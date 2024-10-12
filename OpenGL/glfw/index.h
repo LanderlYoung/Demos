@@ -12,6 +12,8 @@
 // include gl header
 #define GLEW_STATIC
 #include <GL/glew.h>
+// glfw
+#include <GLFW/glfw3.h>
 
 #include "utils.h"
 
@@ -22,6 +24,10 @@ public:
     virtual ~Renderer() = default;
 
     virtual void render() = 0;
+
+    virtual void handleKeyEvent(int key, int action) {
+        // empty
+    }
 };
 
 Renderer *makeTriangleRenderer();
