@@ -1,17 +1,14 @@
 cmake_minimum_required(VERSION 3.14)
-#project(cg)
-
 set(CMAKE_CXX_STANDARD 17)
 
-find_library(glut GLUT)
-find_library(opengL OpenGL)
-
-add_executable(main
+add_executable(glut_app
         main.cpp
         index.h
         basic.cpp
         polygon.cpp
         color.cpp)
-target_link_libraries(main
-        "-framework GLUT"
-        "-framework OpenGL")
+
+target_include_directories(glut_app PUBLIC ${OPENGL_INCLUDE_DIR})
+target_link_libraries(glut_app ${OPENGL_gl_LIBRARY})
+target_link_libraries(glut_app
+        "-framework GLUT")
