@@ -23,7 +23,7 @@ public:
 
     virtual ~Renderer() = default;
 
-    virtual void render() = 0;
+    virtual void render(float width, float height) = 0;
 
     virtual void handleKeyEvent(int key, int action) {
         // empty
@@ -40,8 +40,10 @@ Renderer *makeTextureRenderer();
 
 Renderer *makeTransformationsRenderer();
 
+Renderer *makeCoordinateSystemRenderer();
+
 //constexpr auto makeRenderer = makeTriangleRenderer;
 //constexpr auto makeRenderer = makeRectangleRenderer;
 //constexpr auto makeRenderer = makeShaderRenderer;
 //constexpr auto makeRenderer = makeTextureRenderer;
-constexpr auto makeRenderer = makeTransformationsRenderer;
+constexpr auto makeRenderer = makeCoordinateSystemRenderer;

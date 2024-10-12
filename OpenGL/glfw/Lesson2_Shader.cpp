@@ -112,7 +112,7 @@ public:
 
     ~ShaderRenderer() override = default;
 
-    void render() override {
+    void render(float width, float height) override {
         gl::Scope p(shaderMachine);
 
         glUniform1f(shaderMachine.extra, 0.4f);

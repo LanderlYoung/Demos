@@ -2,17 +2,18 @@
 * <pre>
 * Author: taylorcyang@tencent.com
 * Date:   2019-08-14
-* Time:   16:29
+* Time:   20:57
 * Life with Passion, Code with Creativity.
 * </pre>
 */
+
+#include <string_view>
+#include <iostream>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <string_view>
-#include <iostream>
 #include "index.h"
 #include "glhelper.h"
 #include "../ext/lodepng/lodepng.h"
@@ -21,17 +22,16 @@ constexpr auto vertexShader = R"(
 #version 330 core
 
 layout (location=0) in vec3 position;
-layout (location=1) in vec3 color;
 layout (location=2) in vec2 texCoord;
 
-out vec3 ourColor;
 out vec2 TexCoord;
 
-uniform mat4 transform;
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
 
 void main() {
-    gl_Position = transform * vec4(position, 1.0f);
-    ourColor = color;
+    gl_Position = projection * view * model * vec4(position, 1.0f);
     TexCoord = texCoord;
 }
 )";
@@ -39,20 +39,16 @@ void main() {
 constexpr auto fragmentShader = R"(
 #version 330 core
 
-in vec3 ourColor;
 in vec2 TexCoord;
 
 out vec4 color;
 
-//uniform sampler2D ourTexture;
 uniform sampler2D ourTexture1;
 uniform sampler2D ourTexture2;
 
 uniform float mixValue;
 
 void main() {
-    // color = texture(ourTexture, TexCoord);
-
     // fix inverse texture picture issue
     vec2 inv = vec2(TexCoord.x, 1.0f -TexCoord.y);
 
@@ -64,13 +60,16 @@ void main() {
 
 )";
 
-class TransformationsRenderer : public Renderer {
+class CoordinateSystemRenderer : public Renderer {
 private:
     struct UniformLocation {
-        GLuint texture1;
-        GLuint texture2;
-        GLuint mixValue;
-        GLuint transform;
+        GLint texture1;
+        GLint texture2;
+        GLint mixValue;
+
+        GLint model;
+        GLint view;
+        GLint projection;
     };
 
     float mixValue = 0.2;
@@ -79,11 +78,11 @@ private:
     GLuint texture1 = 0;
     GLuint texture2 = 0;
     GLfloat vertices[32]{
-            //     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
-            0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,   // 右上
-            0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,   // 右下
-            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,   // 左下
-            -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f    // 左上
+            // Positions          // Texture Coords
+            0.5f,  0.5f, 0.0f,   1.0f, 1.0f, // Top Right
+            0.5f, -0.5f, 0.0f,   1.0f, 0.0f, // Bottom Right
+            -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, // Bottom Left
+            -0.5f,  0.5f, 0.0f,   0.0f, 1.0f  // Top Left
     };
 
     GLuint indices[6]{ // 注意索引从0开始!
@@ -98,11 +97,14 @@ private:
     }
 
 public:
-    TransformationsRenderer() : shaderMachine(vertexShader, fragmentShader, [](auto &p, auto &u) {
+    CoordinateSystemRenderer() : shaderMachine(vertexShader, fragmentShader, [](auto &p, auto &u) {
         u.texture1 = p.getUniformLocation("ourTexture1");
         u.texture2 = p.getUniformLocation("ourTexture2");
         u.mixValue = p.getUniformLocation("mixValue");
-        u.transform = p.getUniformLocation("transform");
+
+        u.model = p.getUniformLocation("model");
+        u.view = p.getUniformLocation("view");
+        u.projection = p.getUniformLocation("projection");
     }) {
         if (!shaderMachine.success()) {
             std::cerr << "compile shader failed " << shaderMachine.getCompileLog() << std::endl;
@@ -133,14 +135,12 @@ public:
                 // normalize to [-1, 1]
                 GL_FALSE,
                 // stride (length of each element)
-                8 * sizeof(GLfloat),
+                5 * sizeof(GLfloat),
                 // offset?
                 nullptr
         );
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void *) (3 * sizeof(GLfloat)));
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void *) (6 * sizeof(GLfloat)));
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *) (3 * sizeof(GLfloat)));
         glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
 
         {
@@ -230,7 +230,7 @@ public:
         }
     }
 
-    ~TransformationsRenderer() override {
+    ~CoordinateSystemRenderer() override {
         glDeleteTextures(1, &texture1);
     }
 
@@ -260,18 +260,16 @@ public:
 
         glUniform1i(shaderMachine.extra.texture1, 0);
         glUniform1i(shaderMachine.extra.texture2, 1);
+
         glUniform1f(shaderMachine.extra.mixValue, mixValue);
 
-        auto transform = glm::identity<glm::mat4>();
-        transform = glm::translate(transform, glm::vec3(0.5, -0.5, 0.0));
-        auto time = std::chrono::duration_cast<std::chrono::milliseconds>(
-                std::chrono::system_clock::now().time_since_epoch()).count() % 10000;
-        transform = glm::rotate(
-                transform,
-                 time * 0.002f,
-                glm::vec3(0.0f, 0.0f, 1.0f));
+        glm::mat4 view = glm::translate(glm::identity<glm::mat4>(), glm::vec3(0.0f, 0.0f, -3.0f));
+        glm::mat4 projection = glm::perspective(glm::radians(45.0f), width / height, 0.1f, 100.0f);
+        glm::mat4 model = glm::rotate(glm::identity<glm::mat4>(),glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
-        glUniformMatrix4fv(shaderMachine.extra.transform, 1, GL_FALSE, glm::value_ptr(transform));
+        glUniformMatrix4fv(shaderMachine.extra.model, 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv(shaderMachine.extra.view, 1, GL_FALSE, glm::value_ptr(view));
+        glUniformMatrix4fv(shaderMachine.extra.projection, 1, GL_FALSE, glm::value_ptr(projection));
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
         glCheckError();
@@ -281,7 +279,6 @@ public:
 
 };
 
-Renderer *makeTransformationsRenderer() {
-    return new TransformationsRenderer();
+Renderer *makeCoordinateSystemRenderer() {
+    return new CoordinateSystemRenderer();
 }
-
