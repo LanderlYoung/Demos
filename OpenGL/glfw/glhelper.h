@@ -98,10 +98,14 @@ public:
         DISALLOW_COPY_ASSIGN(Scope);
 
         explicit Scope(const ShaderProgram &program) noexcept
-                : programId(program.program) {
-            if (program.program) {
-                _programScopeStack.push_back(program.program);
-                glUseProgram(program.program);
+                : Scope(program.program) {
+        }
+
+        explicit Scope(const GLuint programId) noexcept
+                : programId(programId) {
+            if (programId) {
+                _programScopeStack.push_back(programId);
+                glUseProgram(programId);
             }
         }
 

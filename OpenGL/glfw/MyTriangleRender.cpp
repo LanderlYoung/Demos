@@ -59,7 +59,7 @@ public:
             glGenBuffers(1, &VBO);
             glBindBuffer(GL_ARRAY_BUFFER, VBO);
             // Set up vertex data (and buffer(s)) and attribute pointers
-            glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
 
             //https://learnopengl-cn.readthedocs.io/zh/latest/01%20Getting%20started/04%20Hello%20Triangle/
             glVertexAttribPointer(
@@ -78,8 +78,8 @@ public:
             );
             glEnableVertexAttribArray(0);
 
-            // release bound VBO
             glBindBuffer(GL_ARRAY_BUFFER, 0);
+            // release bound VBO
 
             // release bound VAO
             glBindVertexArray(0);
@@ -116,7 +116,7 @@ public:
 
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         step();
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
 
         glDrawArrays(GL_TRIANGLES, 0, 3);
         // release bound array
