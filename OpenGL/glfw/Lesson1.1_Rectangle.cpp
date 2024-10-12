@@ -68,11 +68,7 @@ public:
             // Set up vertex data (and buffer(s)) and attribute pointers
             glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-            glGenBuffers(1, &EBO);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-            //https://learnopengl-cn.readthedocs.io/zh/latest/01%20Getting%20started/04%20Hello%20Triangle/
+           //https://learnopengl-cn.readthedocs.io/zh/latest/01%20Getting%20started/04%20Hello%20Triangle/
             glVertexAttribPointer(
                     // location in shader
                     0,
@@ -89,6 +85,14 @@ public:
             );
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             glEnableVertexAttribArray(0);
+
+            {
+                // create index for VBO
+                glGenBuffers(1, &EBO);
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+                glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+            }
 
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
             // release bound VBO
@@ -107,12 +111,20 @@ public:
         auto scope = shaderProgram.use();
         glBindVertexArray(VAO);
 
-        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        {
+            // draw with EBO
 
-        // glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        // glDrawArrays(GL_TRIANGLES, 0, 4);
+            // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        }
+
+        {
+            // draw with VBO
+
+            // glBindBuffer(GL_ARRAY_BUFFER, VBO);
+            // glDrawArrays(GL_TRIANGLES, 0, 4);
+        }
 
         glBindVertexArray(0);
     }
