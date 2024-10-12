@@ -34,7 +34,7 @@ class AlphaGradientFrameLayout : FrameLayout {
     private val helper = AlphaGradientHelper(this)
 
     init {
-        helper.setAlphaGradientParam(0f, 1f, 0f, 300f)
+        helper.setAlphaGradientParam(0.5f, 1f, 100f, 300f)
     }
 
     override fun draw(canvas: Canvas) {
@@ -99,22 +99,24 @@ class AlphaGradientHelper(thisView: View) {
             val viewFullHeight = (endY - startY) / abs(endAlpha - startAlpha)
             val originY = startY - viewFullHeight * min(startAlpha, endAlpha)
 
-            // canvas in range of startY to endY
-            canvas.clipRect(
-                0f, startY,
-                canvas.width.toFloat(), endY
-            )
-            canvas.translate(0f, originY)
+            canvas.withSave {
+                // canvas in range of startY to endY
+                canvas.clipRect(
+                    0f, startY,
+                    canvas.width.toFloat(), endY
+                )
+                canvas.translate(0f, originY)
 
-            // inverse upside down
-            if (endAlpha < startAlpha) {
-                canvas.rotate(180f, canvas.width.toFloat() / 2, viewFullHeight / 2)
+                // inverse upside down
+                if (endAlpha < startAlpha) {
+                    canvas.rotate(180f, canvas.width.toFloat() / 2, viewFullHeight / 2)
+                }
+
+                canvas.scale(1f, viewFullHeight / GRADIENT_DEFAULT_HEIGHT)
+
+                // draw the gradient
+                canvas.drawRect(0f, 0f, canvas.width.toFloat(), GRADIENT_DEFAULT_HEIGHT, it)
             }
-
-            canvas.scale(1f, viewFullHeight / GRADIENT_DEFAULT_HEIGHT)
-
-            // draw the gradient
-            canvas.drawRect(0f, 0f, canvas.width.toFloat(), GRADIENT_DEFAULT_HEIGHT, it)
         }
     }
 
