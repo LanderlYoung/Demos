@@ -89,6 +89,9 @@ public:
 
     DISALLOW_COPY_ASSIGN(Scope);
 
+    /**
+     * stack allocation only
+     */
     DISALLOW_DYNAMIC_CONSTRUCT(Scope);
 
     explicit Scope(Usable &usable) noexcept: Scope(&usable) {}

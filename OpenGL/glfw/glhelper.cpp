@@ -132,7 +132,6 @@ Scope::Scope(Usable *usable) noexcept :
         , _thread_id(std::this_thread::get_id())
 #endif
 {
-
     assert(usable != nullptr);
     _usableStack.push_back(usable);
     usable->use();
