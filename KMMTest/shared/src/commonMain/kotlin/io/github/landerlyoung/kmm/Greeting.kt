@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package io.github.landerlyoung.kmm
 
 import io.github.landerlyoung.kmm.proto.RocketLaunch
@@ -9,12 +11,12 @@ import io.ktor.serialization.kotlinx.json.*
 import io.ktor.utils.io.errors.*
 import kotlinx.serialization.json.Json
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.DurationUnit
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
 
 class Greeting {
   private val platform: Platform = getPlatform()
-
-  // used to track iOS dealloc calling stack
-  var any: Any? = null
 
   @Throws(CancellationException::class)
   suspend fun greeting(): String {
@@ -36,6 +38,22 @@ class Greeting {
         isLenient = true
         ignoreUnknownKeys = true
       })
+    }
+  }
+}
+
+// @ObjCName("KotlinGcTest")
+class GcTest {
+  // used to track iOS dealloc calling stack
+  var any: Any? = null
+
+  companion object {
+    fun benchmark(count: Int): Double {
+      return measureTime {
+        repeat(count) {
+          GcTest()
+        }
+      }.toDouble(DurationUnit.MILLISECONDS)
     }
   }
 }
