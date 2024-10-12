@@ -17,11 +17,12 @@ constexpr auto vertexShader = R"(
 
 layout (location = 0) in vec3 position; // 位置变量的属性位置值为 0
 layout (location = 1) in vec3 color;    // 颜色变量的属性位置值为 1
+uniform float xTrans;
 
 out vec3 ourColor; // output color to fragment shader
 
 void main() {
-    gl_Position = vec4(position, 1.0f);
+    gl_Position = vec4(position.x + xTrans, position.y, position.z, 1.0f);
     ourColor = color;
 }
 )";
@@ -142,15 +143,11 @@ public:
     }
 
     void render() override {
-        auto oc = shaderProgram.getUniformLocation("ourColor");
-        GLfloat g = std::sin(
-                static_cast<double>(
-                        std::chrono::duration_cast<std::chrono::seconds>(
-                                std::chrono::system_clock::now().time_since_epoch()
-                        ).count())) + 0.5f;
+        auto oc = shaderProgram.getUniformLocation("xTrans");
 
         auto scope = shaderProgram.use();
-        glUniform4f(oc, 0.0f, g, 0.0f, 1.0f);
+
+        glUniform1f(oc, 0.4f);
         glBindVertexArray(VAO);
 
         glDrawArrays(GL_TRIANGLES, 0, 3);
