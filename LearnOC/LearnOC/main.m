@@ -11,6 +11,7 @@
 #import "SimpleTest1.h"
 #import "PropertyTest.h"
 #import "KVOTest.h"
+#import "MethodSwizzling.h"
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
@@ -48,6 +49,10 @@ int main(int argc, const char * argv[]) {
             NSLog(@"%@ %@ %@", substring, NSStringFromRange(substringRange), @(count));
         }];
         NSLog(@"%@ %@", s, @(count));
+        
+        /////
+        
+        [[[MethodSwizzlingSub alloc] init] hello];
     }
     return 0;
 }
