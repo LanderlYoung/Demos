@@ -1,0 +1,29 @@
+{
+  "name": "electron-quick-start",
+  "version": "1.0.0",
+  "description": "A minimal Electron application",
+  "main": "main.js",
+  "scripts": {
+    "make": "cmake-js compile",
+    "start": "cmake-js compile && electron ."
+  },
+  "repository": "https://github.com/electron/electron-quick-start",
+  "keywords": [
+    "Electron",
+    "quick",
+    "start",
+    "tutorial",
+    "demo"
+  ],
+  "author": "GitHub",
+  "license": "CC0-1.0",
+  "dependencies": {
+    "node-addon-api": "^8.1.0"
+  },
+  "gypfile": true,
+  "devDependencies": {
+    "@electron/rebuild": "^3.7.0",
+    "cmake-js": "^7.3.0",
+    "electron": "^32.2.0"
+  }
+}
