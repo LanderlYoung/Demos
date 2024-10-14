@@ -1,9 +1,81 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36" version="24.7.17">
   <diagram name="第 1 页" id="0caOHaQqN6kdgEYJ-XXT">
-    <mxGraphModel>
+    <mxGraphModel dx="2027" dy="1121" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="8h5_Cuu2qwKBEmIBL3tr-2" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="155" y="295" width="200" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="8h5_Cuu2qwKBEmIBL3tr-3" value="主进程&lt;div&gt;Node.js&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="225" y="300" width="60" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="8h5_Cuu2qwKBEmIBL3tr-4" value="&lt;span style=&quot;text-wrap: nowrap;&quot;&gt;页面进程1&lt;/span&gt;&lt;div style=&quot;text-wrap: nowrap;&quot;&gt;Chromium WebView&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;comic=1;enumerate=0;" vertex="1" parent="1">
+          <mxGeometry x="82" y="173" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="8h5_Cuu2qwKBEmIBL3tr-6" value="&lt;span style=&quot;text-wrap: nowrap;&quot;&gt;页面进程&lt;/span&gt;&lt;span style=&quot;text-wrap: nowrap; background-color: initial;&quot;&gt;2&lt;/span&gt;&lt;div&gt;&lt;div style=&quot;text-wrap: nowrap;&quot;&gt;Chromium WebView&lt;/div&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;comic=1;enumerate=0;" vertex="1" parent="1">
+          <mxGeometry x="278" y="175" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="8h5_Cuu2qwKBEmIBL3tr-7" value="node addons&lt;div&gt;C++/C/...&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="250" y="345" width="90" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="8h5_Cuu2qwKBEmIBL3tr-8" value="App Logic&lt;div&gt;(JavaScript)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="170" y="345" width="70" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="8h5_Cuu2qwKBEmIBL3tr-10" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="222" y="283" as="sourcePoint" />
+            <mxPoint x="185" y="250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8h5_Cuu2qwKBEmIBL3tr-11" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="278" y="289" as="sourcePoint" />
+            <mxPoint x="317" y="252" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8h5_Cuu2qwKBEmIBL3tr-12" value="Electron" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="220" y="444" width="62" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="8h5_Cuu2qwKBEmIBL3tr-13" value="" style="endArrow=none;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="494" y="486" as="sourcePoint" />
+            <mxPoint x="500" y="139" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8h5_Cuu2qwKBEmIBL3tr-14" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="626" y="290.5" width="200" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="8h5_Cuu2qwKBEmIBL3tr-15" value="主进程&lt;div&gt;Rust&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="699" y="295.5" width="54" height="41" as="geometry" />
+        </mxCell>
+        <mxCell id="8h5_Cuu2qwKBEmIBL3tr-16" value="&lt;span style=&quot;text-wrap: nowrap;&quot;&gt;页面进程1&lt;/span&gt;&lt;div style=&quot;text-wrap: nowrap;&quot;&gt;WebView&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;comic=1;enumerate=0;" vertex="1" parent="1">
+          <mxGeometry x="553" y="168.5" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="8h5_Cuu2qwKBEmIBL3tr-17" value="&lt;span style=&quot;text-wrap: nowrap;&quot;&gt;页面进程&lt;/span&gt;&lt;span style=&quot;text-wrap: nowrap; background-color: initial;&quot;&gt;2&lt;/span&gt;&lt;div&gt;&lt;div style=&quot;text-wrap: nowrap;&quot;&gt;WebView&lt;/div&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;comic=1;enumerate=0;" vertex="1" parent="1">
+          <mxGeometry x="749" y="170.5" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="8h5_Cuu2qwKBEmIBL3tr-18" value="plugins addons&lt;div&gt;Rust/...&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="721" y="340" width="90" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="8h5_Cuu2qwKBEmIBL3tr-19" value="App Logic&lt;div&gt;(Rust)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="641" y="340" width="70" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="8h5_Cuu2qwKBEmIBL3tr-20" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="693" y="278.5" as="sourcePoint" />
+            <mxPoint x="656" y="245.5" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8h5_Cuu2qwKBEmIBL3tr-21" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="749" y="284.5" as="sourcePoint" />
+            <mxPoint x="788" y="247.5" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8h5_Cuu2qwKBEmIBL3tr-22" value="Tauri" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="704" y="444" width="44" height="26" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
