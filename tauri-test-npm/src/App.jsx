@@ -11,17 +11,6 @@ function App() {
   const [greetMsg, setGreetMsg] = useState("");
   const [name, setName] = useState("");
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    const msg = await invoke("greet", { name });
-    setGreetMsg(msg);
-    await message(msg, {
-      title: 'Tauri Dialog Test',
-      kind: 'warning',
-      okLabel: 'Great'
-    });
-  }
-
   return (
     <div className="container">
       <h1>Welcome to Tauri!</h1>
@@ -36,9 +25,12 @@ function App() {
         }}>
           <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
         </p>
-        <a href="https://reactjs.org" target="_blank">
+        <p href="https://reactjs.org" target="_blank" onClick={(e) => {
+          e.preventDefault();
+          openNewWindowFromRust('reactjs_webview', "https://reactjs.org");
+        }}>
           <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        </p>
       </div>
 
       <p>Click on the Tauri, Vite, and React logos to learn more.</p>
@@ -47,7 +39,7 @@ function App() {
         className="row"
         onSubmit={(e) => {
           e.preventDefault();
-          greet();
+          greet(name, setGreetMsg);
         }}
       >
         <input
@@ -63,6 +55,19 @@ function App() {
   );
 }
 
+async function greet(name, setGreetMsg) {
+  // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+  const msg = await invoke("greet", { name });
+  setGreetMsg(msg);
+
+  // show dialog
+  await message(msg, {
+    title: 'Tauri Dialog Test',
+    kind: 'warning',
+    okLabel: 'Great'
+  });
+}
+
 async function logEvent(who, name) {
   await who.once(name, e => {
     console.log(`${name} event: ${JSON.stringify(e)}`);
@@ -74,7 +79,7 @@ async function openNewWindow(label, url) {
   // https://tauri.app/reference/javascript/api/namespacewebview/
   console.log("open webview " + url);
 
-  await postNotification("open webview " + url);
+  await postNotification("js open webview " + label);
 
   const appWindow = new Window(label);
   const webview = new Webview(appWindow, label, {
@@ -95,6 +100,11 @@ async function openNewWindow(label, url) {
       appWindow.close();
     }, 5000);
   })
+}
+
+async function openNewWindowFromRust(label, url) {
+  await postNotification("js open webview " + label);
+  await invoke("open_new_window", { label, url });
 }
 
 let needRequestPermission = true;
