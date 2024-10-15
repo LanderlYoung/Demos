@@ -1,6 +1,9 @@
 import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/core";
+import { message,  } from '@tauri-apps/plugin-dialog';
+import { Window } from "@tauri-apps/api/window"
+import { Webview } from "@tauri-apps/api/webview"
 import "./App.css";
 
 function App() {
@@ -9,7 +12,13 @@ function App() {
 
   async function greet() {
     // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    setGreetMsg(await invoke("greet", { name }));
+    const msg = await invoke("greet", { name });
+    setGreetMsg(msg);
+    await message(msg, {
+      title: 'Tauri Dialog Test', 
+      kind: 'warning',
+      okLabel: 'Great'
+    });
   }
 
   return (
@@ -23,7 +32,10 @@ function App() {
         <a href="https://tauri.app" target="_blank">
           <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
         </a>
-        <a href="https://reactjs.org" target="_blank">
+        <a href="https://reactjs.org" target="_blank" onClick={(e) => {
+          e.preventDefault();
+          open("https://reactjs.org", "safari")
+        }}>
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
