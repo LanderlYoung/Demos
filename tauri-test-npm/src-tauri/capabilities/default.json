@@ -13,6 +13,7 @@
     "core:webview:allow-create-webview",
     "shell:allow-open",
     "dialog:default",
-    "shell:default"
+    "shell:default",
+    "notification:default"
   ]
 }
