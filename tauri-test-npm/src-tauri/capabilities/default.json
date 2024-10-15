@@ -7,6 +7,10 @@
   ],
   "permissions": [
     "core:default",
+    "core:window:allow-create",
+    "core:window:allow-set-title",
+    "core:window:allow-close",
+    "core:webview:allow-create-webview",
     "shell:allow-open",
     "dialog:default",
     "shell:default"
