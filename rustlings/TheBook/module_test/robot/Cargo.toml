@@ -1,0 +1,8 @@
+[package]
+name = "robot"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+lollipop = { path = "../lollipop" }
+kitkat = { path = "../kitkat" }
