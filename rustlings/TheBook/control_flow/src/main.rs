@@ -36,9 +36,18 @@ fn main() {
     let x = 'outer_loop: loop {
         // inner loop
         loop {
-            break 'outer_loop 10;
+            if index > 5 {
+                break 'outer_loop 10;
+            }
         }
     };
+
+    // can we do while true ?
+    while true {
+        if index > 5 {
+            break;
+        }
+    }
 
     println!("{val} {x}");
 
@@ -69,3 +78,4 @@ fn fibo(index: i32) -> i64 {
     }
     fibo(index - 1) + fibo(index - 2)
 }
+
