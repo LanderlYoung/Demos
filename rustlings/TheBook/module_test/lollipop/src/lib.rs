@@ -1,14 +1,13 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+// sub modules
+mod art;
+pub use art::ArtVm; // re export
+pub use art::gc; // re export grand-child module
+pub mod material_design;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+pub fn lollipop(count: u32) -> String {
+    let mut s = format!("give {count} lollipop");
+    if count > 1 {
+        s.push_str("s");
     }
+    s
 }
