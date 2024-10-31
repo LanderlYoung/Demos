@@ -1,3 +1,4 @@
+// this is the content of `mod minigrip`
 use std::io::{self};
 
 pub struct Config<'a> {

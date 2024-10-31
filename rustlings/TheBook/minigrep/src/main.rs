@@ -1,5 +1,3 @@
-mod minigrep;
-
 use minigrep::{Config, MiniGrep};
 use std::env::args;
 use std::error;
