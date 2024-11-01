@@ -57,3 +57,22 @@ impl MiniGrep {
         None
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn option_parse() {
+        let args = vec![String::from("cmd"), String::from("pattern")];
+        let r = Config::new(&args);
+        assert!(r.is_err());
+
+        let args = vec![String::from("cmd"), String::from("pattern"), String::from("file.txt")];
+        let r = Config::new(&args);
+        assert!(r.is_ok());
+        let config = r.unwrap();
+        assert_eq!(config.file_name, "file.txt");
+        assert_eq!(config.pattern, "pattern");
+    }
+}
