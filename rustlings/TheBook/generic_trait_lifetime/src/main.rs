@@ -133,3 +133,17 @@ fn returns_summarizable1() -> impl Summary {
 //         }
 //     }
 // }
+
+struct TraitMethodButNoImpl {}
+
+impl  TraitMethodButNoImpl {
+    fn summarize(&self) -> String {
+        return String::from("implemented the trait method, but no explicit impl declare");
+    }
+}
+
+fn can_we_call() {
+    let t = TraitMethodButNoImpl{};
+    // error[E0277]: the trait bound `TraitMethodButNoImpl: Summary` is not satisfied
+    // generate_summary(&t);
+}
