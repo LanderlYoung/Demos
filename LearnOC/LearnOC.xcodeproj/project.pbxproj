@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1EAC98F82D09998A00C60139 /* ClassProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EAC98F72D09998A00C60139 /* ClassProtocol.m */; };
 		6F1A864626CA841300D56F5E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F1A864526CA841300D56F5E /* main.m */; };
 		6F1A864E26CA887D00D56F5E /* ClassInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F1A864D26CA887D00D56F5E /* ClassInspector.m */; };
 		6F7C4B4326E72E4C00C87E6B /* SimpleTest1.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F7C4B4226E72E4C00C87E6B /* SimpleTest1.m */; };
@@ -29,6 +30,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1EAC98F62D09998A00C60139 /* ClassProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClassProtocol.h; sourceTree = "<group>"; };
+		1EAC98F72D09998A00C60139 /* ClassProtocol.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ClassProtocol.m; sourceTree = "<group>"; };
 		6F1A864226CA841200D56F5E /* LearnOC */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LearnOC; sourceTree = BUILT_PRODUCTS_DIR; };
 		6F1A864526CA841300D56F5E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		6F1A864C26CA887D00D56F5E /* ClassInspector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClassInspector.h; sourceTree = "<group>"; };
@@ -88,6 +91,8 @@
 				6FB2B93B28BE2F4C0091A637 /* MethodSwizzling.m */,
 				6FDE6BDC28F40635008429D3 /* DeallocOrderTest.h */,
 				6FDE6BDD28F40635008429D3 /* DeallocOrderTest.m */,
+				1EAC98F62D09998A00C60139 /* ClassProtocol.h */,
+				1EAC98F72D09998A00C60139 /* ClassProtocol.m */,
 			);
 			path = LearnOC;
 			sourceTree = "<group>";
@@ -150,6 +155,7 @@
 			files = (
 				6F1A864E26CA887D00D56F5E /* ClassInspector.m in Sources */,
 				6F1A864626CA841300D56F5E /* main.m in Sources */,
+				1EAC98F82D09998A00C60139 /* ClassProtocol.m in Sources */,
 				6F7C4B4626E72EF700C87E6B /* PropertyTest.m in Sources */,
 				6F7C4B4926E73B9700C87E6B /* KVOTest.m in Sources */,
 				6FB2B93C28BE2F4C0091A637 /* MethodSwizzling.m in Sources */,

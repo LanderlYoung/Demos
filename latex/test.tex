@@ -1,0 +1,123 @@
+% hello.tex - Our first LaTeX example!
+\documentclass{article}
+\usepackage{framed}
+\usepackage{pbox}
+
+
+\usepackage{amsmath}
+
+\usepackage{mathtools}
+
+
+\begein{equasion}
+
+
+\usepackage{color}
+
+\begin{document}
+
+\section{demo}
+Hello World!
+
+\section{makebox and mbox}
+\makebox[0pt]{Some text} over this text
+\makebox[15ex][s]{Censored text}\hspace{-15ex}\makebox[15ex][s]{X X X X X}
+Text \makebox[2\width][r]{running away}
+
+\section{framebox}
+\makebox[\textwidth]{c e n t r a l} \par
+\makebox[\textwidth][s]{s p r e a d} \par
+\framebox[1.1\width]{Guess I’m framed now!} \par
+\framebox[0.8\width][r]{Bummer, I am too wide} \par
+\framebox[1cm][l]{never mind, so am I}
+
+
+\section{framed}
+\begin{framed}
+This is an easy way to box text within a document!
+\end{framed}
+
+\section{raisebox}
+\begin{framed}
+\raisebox{0pt}[0pt][0pt]{\Large%
+\textbf{Aaaa\raisebox{-0.3ex}{a}%
+\raisebox{-0.7ex}{aa}%
+\raisebox{-1.2ex}{r}%
+\raisebox{-2.2ex}{g}%
+\raisebox{-4.5ex}{h}
+}
+}
+he shouted but not even the next
+one in line noticed that something
+terrible had happened to him.
+\end{framed}
+
+
+\section{minipage and parbox}
+\noindent
+\fbox{\parbox[b][4em][t]{0.33\textwidth}{Some \\ text} }
+\fbox{\parbox[c][4em][s]{0.33\textwidth}{Some \vfill text} }
+\fbox{\parbox[t][4em][c]{0.33\textwidth}{Some \\ text} }
+
+\fbox{
+\parbox{\textwidth}{
+Some very long text...Some very long text...Some very long text...Some very long text...
+}
+}
+
+\pbox[b]{5cm}{This is long text that will be wrapped once it reaches five
+centimeters.}
+
+
+\section{rules}
+\rule{3mm}{.1pt}%
+\rule[-1mm]{5mm}{1cm}%
+\rule{3mm}{.1pt}%
+\rule[1mm]{1cm}{5mm}%
+\rule{3mm}{.1pt}
+
+\section{struts}
+
+\section{amsmath}
+
+\begin{displaymath}
+\forall x \in X, \quad \exists y \leq \epsilon
+\end{displaymath}
+
+\begin{displaymath}
+k_{n+1} = n^22 + k_n^2 - k_{n-1}
+\end{displaymath}
+
+\begin{equation}
+x = a_0 + \cfrac{1}{a_1
++ \cfrac{1}{a_2
++ \cfrac{1}{a_3 + \cfrac{1}{a_4} } } }
+\end{equation}
+
+\begin{equation}
+\frac{
+\begin{array}[b]{r}
+\left( x_1 x_2 \right)\\
+\times \left( x'_1 x'_2 \right)
+\end{array}
+}{
+\left( y_1y_2y_3y_4 \right)
+}
+\end{equation}
+
+\begin{displaymath}
+z = \overbrace{
+\underbrace{x}_\text{real} + i
+\underbrace{y}_\text{imaginary}
+}^\text{complex number}
+\end{displaymath}
+
+
+
+
+\long\def\dummy#1{#1}
+\dummy{First paragraph\par Second paragraph}
+
+
+
+\end{document}

@@ -13,6 +13,7 @@
 #import "KVOTest.h"
 #import "MethodSwizzling.h"
 #import "DeallocOrderTest.h"
+#import "ClassProtocol.h"
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
@@ -22,6 +23,9 @@ int main(int argc, const char * argv[]) {
         
         id myClass = [SimpleTest1 runTest];
         [DeallocOrderTest test];
+        
+        NSLog(@"================");
+        [ClassProtocol runTest];
 
         NSLog(@"================");
         NSString *message = [myClass inspect];
