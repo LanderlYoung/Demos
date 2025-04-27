@@ -24,11 +24,11 @@ class VerticalTextView : androidx.appcompat.widget.AppCompatTextView {
     defStyleAttr)
 
 
-  override fun onDraw(canvas: Canvas?) {
+  override fun onDraw(canvas: Canvas) {
     stroke(canvas)
   }
 
-  private fun stroke(canvas: Canvas?) {
+  private fun stroke(canvas: Canvas) {
     // draw stroke
     val color = currentTextColor
     paint.strokeWidth = 5f

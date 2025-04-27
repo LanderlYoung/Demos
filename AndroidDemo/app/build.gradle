@@ -2,15 +2,17 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 33
-    buildToolsVersion "29.0.1"
+    compileSdkVersion 35
     defaultConfig {
         applicationId "io.github.landerlyoung.demo"
         minSdkVersion 21
-        targetSdkVersion 33
+        targetSdkVersion 35
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildFeatures {
+        viewBinding = true
     }
     buildTypes {
         release {
@@ -18,6 +20,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    namespace 'io.github.landerlyoung.demo'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+kotlin {
+    jvmToolchain(17)
 }
 
 dependencies {
@@ -27,7 +39,9 @@ dependencies {
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.core:core-ktx:1.10.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.activity:activity:1.8.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.5.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
